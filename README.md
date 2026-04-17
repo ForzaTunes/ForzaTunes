@@ -28,8 +28,8 @@ Community-driven tune sharing for Forza Horizon 5 and Forza Motorsport. Browse, 
 ### Setup
 
 ```bash
-# Clone the repo (replace with the actual URL once the repo is public)
-git clone https://github.com/<owner>/forzatunes.git
+# Clone the repo
+git clone https://github.com/forzatunes/forzatunes.git
 cd forzatunes
 
 # Install dependencies
