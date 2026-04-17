@@ -4,5 +4,5 @@ compatibility_date = "2025-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "forzatunes-db"
-database_id = "<generated-after-d1-create>"
+database_id = "99143039-6920-45b6-b59e-b04d2410e645"
 migrations_dir = "src/lib/db/migrations"
