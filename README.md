@@ -3,8 +3,8 @@
 Community-driven tune sharing for Forza Horizon 5 and Forza Motorsport. Browse, share, and star tunes created by the community.
 
 > The production deployment at [forzatunes.com](https://forzatunes.com)
-> is coming soon — this repository is the source of truth during the
-> pre-launch period. See [Deployment](#deployment) for how it is hosted.
+> is LIVE NOW! — this repository is the source of truth.
+> See [Deployment](#deployment) for how it is hosted.
 
 ## Tech Stack
 
