@@ -19,7 +19,7 @@ Community-driven tune sharing for Forza Horizon 5 and Forza Motorsport. Browse, 
 
 ### Prerequisites
 
-- Node.js >= 20
+- Node.js >= 22.12 (Astro 6 requirement; CI uses Node 24)
 - npm >= 10
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) (`npm install -g wrangler`)
 - Cloudflare account (free tier works)
