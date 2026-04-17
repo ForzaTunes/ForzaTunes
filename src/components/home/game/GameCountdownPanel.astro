@@ -1,0 +1,86 @@
+---
+import FallingSakura from "../../effects/FallingSakura";
+
+interface Props {
+  gameName: string;
+  gameSlug: string;
+  daysUntilPlayable: number;
+  playableFromUtc: string;
+  releaseDate?: string;
+}
+
+const { gameName, daysUntilPlayable, playableFromUtc, releaseDate } =
+  Astro.props;
+
+function formatMonthDay(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+const earlyAccessLabel = formatMonthDay(playableFromUtc);
+const worldwideLabel = releaseDate ? formatMonthDay(releaseDate) : null;
+const showWorldwide =
+  worldwideLabel !== null && worldwideLabel !== earlyAccessLabel;
+
+const bigNumber = daysUntilPlayable === 0 ? "<1" : String(daysUntilPlayable);
+const daysLabel = daysUntilPlayable === 1 ? "DAY" : "DAYS";
+---
+
+<section
+  class="relative h-full flex flex-col border border-gray-700 bg-gray-900 overflow-hidden"
+  aria-label={`${gameName} launch countdown`}
+>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent-900/40 via-transparent to-transparent z-0"
+  ></div>
+
+  <div class="relative flex items-stretch z-10">
+    <span class="px-3 py-1.5 text-[11px] font-heading uppercase tracking-widest bg-accent-600 text-white">
+      Launching Soon
+    </span>
+  </div>
+
+  <div class="relative z-10 flex flex-1 flex-col items-center justify-center text-center px-6 py-8">
+    <div class="flex items-baseline gap-3">
+      <span class="text-7xl sm:text-8xl font-heading font-extrabold italic text-white leading-none tabular-nums drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+        {bigNumber}
+      </span>
+      <span class="text-xl font-heading uppercase tracking-widest text-accent-400">
+        {daysLabel}
+      </span>
+    </div>
+
+    <div class="mt-3 text-sm font-heading uppercase tracking-widest text-gray-200">
+      Early Access {earlyAccessLabel}
+    </div>
+    {showWorldwide && (
+      <div class="mt-1 text-xs text-gray-400">
+        Worldwide release {worldwideLabel}
+      </div>
+    )}
+
+    <p class="mt-5 max-w-xs text-xs text-gray-400 leading-relaxed">
+      Tuning unlocks when the game does. We&rsquo;ll be ready.
+    </p>
+  </div>
+
+  <div class="relative z-10 flex items-stretch border-t border-gray-800 bg-gray-950/70">
+    <a
+      href="/"
+      class="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-xs font-heading uppercase tracking-widest text-white hover:bg-white/5 focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-400 transition-colors"
+    >
+      <svg class="w-4 h-4 text-accent-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      Browse Other Games
+    </a>
+  </div>
+
+  <FallingSakura client:load petalCount={5} fallSpeed={0.5} opacity={0.34} />
+</section>

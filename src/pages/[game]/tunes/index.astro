@@ -1,0 +1,186 @@
+---
+import PageShell from "../../../components/layout/PageShell.astro";
+import TuneListView from "../../../components/TuneListView.astro";
+import Pagination from "../../../components/Pagination.astro";
+import TunesToolbar from "../../../components/islands/TunesToolbar";
+import ActiveFilterChips from "../../../components/tunes/ActiveFilterChips.astro";
+import type {
+  Drivetrain,
+  TuneSearchFilters,
+  TuneSortField,
+  TuneWithDetails,
+} from "../../../lib/models";
+
+const { game: gameSlug } = Astro.params;
+const url = new URL(Astro.request.url);
+
+const { games, tunes: tuneManager, cars: carManager, stars: starManager } =
+  Astro.locals.managers;
+const game = await games.getBySlug(gameSlug!);
+if (!game) return Astro.redirect("/404");
+
+const config = games.getConfig(gameSlug!)!;
+
+function parsePiParam(value: string | null): number | undefined {
+  if (!value) return undefined;
+  const n = Number(value);
+  if (!Number.isFinite(n) || !Number.isInteger(n)) return undefined;
+  if (n < 0 || n > 9999) return undefined;
+  return n;
+}
+
+function parseList(raw: string | null): string[] {
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((v) => v.trim())
+    .filter((v) => v.length > 0);
+}
+
+const VALID_DRIVETRAINS = new Set<Drivetrain>(["FWD", "RWD", "AWD"]);
+const drivetrains = parseList(url.searchParams.get("drivetrain")).filter(
+  (value): value is Drivetrain =>
+    VALID_DRIVETRAINS.has(value as Drivetrain),
+);
+
+const tuneTypeList = parseList(url.searchParams.get("type"));
+const carClassList = parseList(url.searchParams.get("class"));
+const makeList = parseList(url.searchParams.get("make"));
+
+function parseCarIdParam(value: string | null): number | undefined {
+  if (!value) return undefined;
+  const n = Number(value);
+  if (!Number.isFinite(n) || !Number.isInteger(n) || n <= 0) return undefined;
+  return n;
+}
+
+const filters: TuneSearchFilters = {
+  query: url.searchParams.get("q") || undefined,
+  tuneTypes: tuneTypeList.length > 0 ? tuneTypeList : undefined,
+  carClasses: carClassList.length > 0 ? carClassList : undefined,
+  makes: makeList.length > 0 ? makeList : undefined,
+  drivetrains: drivetrains.length > 0 ? drivetrains : undefined,
+  piMin: parsePiParam(url.searchParams.get("piMin")),
+  piMax: parsePiParam(url.searchParams.get("piMax")),
+  carId: parseCarIdParam(url.searchParams.get("car")),
+};
+
+const validSorts = ["newest", "most_starred", "pi_asc", "pi_desc"] as const;
+const sortParam = url.searchParams.get("sort");
+const sort: TuneSortField = validSorts.includes(sortParam as TuneSortField)
+  ? (sortParam as TuneSortField)
+  : "newest";
+
+const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
+
+const [results, allMakes, filterCar, totalTunes] = await Promise.all([
+  tuneManager.search(game.id, filters, sort, { page, pageSize: 24 }),
+  carManager.getMakes(game.id),
+  filters.carId ? carManager.getById(filters.carId) : Promise.resolve(null),
+  tuneManager.countByGame(game.id),
+]);
+
+const tuneIds = results.items.map((t) => t.id);
+const user = Astro.locals.user;
+const starredTuneIds = user
+  ? await starManager.getUserStarredTuneIds(user.id, tuneIds)
+  : new Set<number>();
+
+const tunesWithSlug = results.items.map((t: TuneWithDetails) => ({
+  ...t,
+  gameSlug: gameSlug!,
+}));
+
+const tuneTypeLabels = new Map(
+  config.tuneTypes.map((t) => [t.value, t.label]),
+);
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=300, stale-while-revalidate=600",
+);
+---
+
+<PageShell
+  title={`Browse ${game.name} Tunes — ForzaTunes`}
+  description={`Search and filter community tunes for ${game.name}.`}
+  currentGameSlug={gameSlug}
+  canonicalUrl={`/${gameSlug}/tunes/`}
+>
+  <div class="max-w-6xl mx-auto py-8 px-4">
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 mb-4">
+      <h1 class="font-heading uppercase tracking-widest text-sm text-gray-200">
+        {game.name} Tunes
+      </h1>
+      <div class="inline-flex items-center gap-4">
+        <span class="font-heading uppercase tracking-widest text-xs text-gray-500">
+          <span class="text-accent-400">{totalTunes.toLocaleString()}</span>
+          {" "}
+          Community {totalTunes === 1 ? "Tune" : "Tunes"}
+        </span>
+        {user && (
+          <a
+            href={`/${gameSlug}/submit`}
+            class="inline-flex items-center gap-1.5 font-heading uppercase tracking-widest text-xs text-accent-400 hover:text-accent-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 transition-colors"
+            title={`Submit a new ${game.name} tune`}
+          >
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            New Tune
+          </a>
+        )}
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <TunesToolbar
+        client:load
+        currentQuery={filters.query ?? ""}
+        tuneTypes={config.tuneTypes}
+        makes={allMakes}
+        currentFilters={{
+          tuneTypes: filters.tuneTypes ?? [],
+          carClasses: filters.carClasses ?? [],
+          makes: filters.makes ?? [],
+          drivetrains: filters.drivetrains ?? [],
+          piMin: filters.piMin?.toString() ?? "",
+          piMax: filters.piMax?.toString() ?? "",
+        }}
+        classRanges={config.classRanges}
+        currentSort={sort}
+        totalCount={results.total}
+      />
+
+      <ActiveFilterChips
+        filters={filters}
+        tuneTypes={config.tuneTypes}
+        classRanges={config.classRanges}
+        filterCar={filterCar}
+        baseUrl={`/${gameSlug}/tunes/`}
+        searchParams={url.searchParams}
+      />
+    </div>
+
+    <TuneListView
+      tunes={tunesWithSlug}
+      starredTuneIds={starredTuneIds}
+      isLoggedIn={!!user}
+      tuneTypeLabels={tuneTypeLabels}
+    />
+
+    <Pagination
+      currentPage={results.page}
+      totalPages={results.totalPages}
+      baseUrl={`/${gameSlug}/tunes/`}
+      searchParams={url.searchParams}
+    />
+  </div>
+</PageShell>

@@ -1,0 +1,40 @@
+---
+import PageShell from "../../../components/layout/PageShell.astro";
+import CarsView from "../../../components/cars/CarsView.astro";
+
+const { game: gameSlug } = Astro.params;
+const { games, cars: carManager } = Astro.locals.managers;
+
+const game = await games.getBySlug(gameSlug!);
+if (!game) return Astro.redirect("/404");
+
+const makeParam = Astro.url.searchParams.get("make") || "";
+const filters = makeParam ? { make: makeParam } : undefined;
+
+const [cars, makes] = await Promise.all([
+  carManager.getByGame(game.id, filters),
+  carManager.getMakes(game.id),
+]);
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=300, stale-while-revalidate=600",
+);
+---
+
+<PageShell
+  title={`Cars — ${game.name} — ForzaTunes`}
+  description={`Browse all ${cars.length} cars available in ${game.name}.`}
+  currentGameSlug={gameSlug}
+  canonicalUrl={`/${gameSlug}/cars/`}
+>
+  <div class="max-w-6xl mx-auto py-8 px-4">
+    <CarsView
+      gameSlug={gameSlug!}
+      gameName={game.name}
+      cars={cars}
+      makes={makes}
+      currentMake={makeParam}
+    />
+  </div>
+</PageShell>

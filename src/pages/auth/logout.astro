@@ -1,0 +1,16 @@
+---
+import { env } from "cloudflare:workers";
+import { SessionManager } from "../../lib/auth/SessionManager";
+
+const sessionManager = new SessionManager(env.SESSION_SECRET);
+const cookieConfig = sessionManager.getCookieConfig();
+
+Astro.cookies.delete(cookieConfig.name, {
+  httpOnly: cookieConfig.httpOnly,
+  secure: cookieConfig.secure,
+  sameSite: cookieConfig.sameSite,
+  path: cookieConfig.path,
+});
+
+return Astro.redirect("/");
+---

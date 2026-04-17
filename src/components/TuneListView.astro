@@ -1,0 +1,75 @@
+---
+import TuneGrid from "./TuneGrid.astro";
+import TuneTable from "./TuneTable.astro";
+import type { TuneWithDetails, GameConfig } from "../lib/models";
+
+interface Props {
+  tunes: Array<TuneWithDetails & { gameSlug: string }>;
+  starredTuneIds?: Set<number>;
+  isLoggedIn?: boolean;
+  emptyMessage?: string;
+  tuneTypeLabels?: Map<string, string>;
+  gameConfigsBySlug?: Map<string, GameConfig>;
+  ownerActions?: boolean;
+}
+
+const {
+  tunes,
+  starredTuneIds = new Set<number>(),
+  isLoggedIn = false,
+  emptyMessage = "No tunes found.",
+  tuneTypeLabels,
+  gameConfigsBySlug,
+  ownerActions = false,
+} = Astro.props;
+
+const isEmpty = tunes.length === 0;
+---
+
+<div data-tunes-view data-view="grid">
+  <script is:inline>
+    (function () {
+      try {
+        var stored = localStorage.getItem("tunes-view");
+        if (stored === "grid" || stored === "table") {
+          var el = document.currentScript && document.currentScript.parentElement;
+          if (el) el.dataset.view = stored;
+        }
+      } catch (e) {
+        // storage disabled or unavailable — stay on default
+      }
+    })();
+  </script>
+
+  {isEmpty ? (
+    <p class="text-center text-gray-500 py-12">{emptyMessage}</p>
+  ) : (
+    <>
+      <TuneGrid
+        tunes={tunes}
+        starredTuneIds={starredTuneIds}
+        isLoggedIn={isLoggedIn}
+        tuneTypeLabels={tuneTypeLabels}
+        gameConfigsBySlug={gameConfigsBySlug}
+        ownerActions={ownerActions}
+      />
+      <TuneTable
+        tunes={tunes}
+        starredTuneIds={starredTuneIds}
+        isLoggedIn={isLoggedIn}
+        tuneTypeLabels={tuneTypeLabels}
+        gameConfigsBySlug={gameConfigsBySlug}
+        ownerActions={ownerActions}
+      />
+    </>
+  )}
+</div>
+
+<style is:global>
+  [data-tunes-view][data-view="grid"] .view-table {
+    display: none;
+  }
+  [data-tunes-view][data-view="table"] .view-grid {
+    display: none;
+  }
+</style>

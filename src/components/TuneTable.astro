@@ -1,0 +1,155 @@
+---
+import InGameClassPill from "./submit/InGameClassPill";
+import StarButton from "./tune/StarButton";
+import ShareCodeDisplay from "./ShareCodeDisplay.astro";
+import TuneCardOwnerMenu from "./profile/TuneCardOwnerMenu";
+import { formatCarSubtitle } from "../lib/utils/formatCarSubtitle";
+import type { TuneWithDetails, GameConfig } from "../lib/models";
+
+interface Props {
+  tunes: Array<TuneWithDetails & { gameSlug: string }>;
+  starredTuneIds?: Set<number>;
+  isLoggedIn?: boolean;
+  emptyMessage?: string;
+  tuneTypeLabels?: Map<string, string>;
+  gameConfigsBySlug?: Map<string, GameConfig>;
+  ownerActions?: boolean;
+}
+
+const {
+  tunes,
+  starredTuneIds = new Set<number>(),
+  isLoggedIn = false,
+  emptyMessage = "No tunes found.",
+  tuneTypeLabels,
+  gameConfigsBySlug,
+  ownerActions = false,
+} = Astro.props;
+
+const columnCount = ownerActions ? 9 : 8;
+
+function resolveTuneTypeLabel(gameSlug: string, tuneType: string): string {
+  if (tuneTypeLabels?.has(tuneType)) {
+    return tuneTypeLabels.get(tuneType)!;
+  }
+  const config = gameConfigsBySlug?.get(gameSlug);
+  if (config) {
+    const match = config.tuneTypes.find((t) => t.value === tuneType);
+    if (match) return match.label;
+  }
+  return tuneType;
+}
+---
+
+<div class="view-table border border-gray-700 bg-gray-900 overflow-x-auto">
+  <table class="w-full text-sm text-left">
+    <thead
+      class="text-[11px] font-heading uppercase tracking-widest text-gray-400 border-b border-gray-700 bg-gray-950/50"
+    >
+      <tr>
+        <th class="px-3 py-3 font-medium">Title</th>
+        <th class="px-3 py-3 font-medium">Car</th>
+        <th class="px-3 py-3 font-medium">Class</th>
+        <th class="px-3 py-3 font-medium">Type</th>
+        <th class="px-3 py-3 font-medium">DT</th>
+        <th class="px-3 py-3 font-medium">Creator</th>
+        <th class="px-3 py-3 font-medium">Code</th>
+        <th class="px-3 py-3 font-medium text-right">Stars</th>
+        {ownerActions && <th class="px-2 py-3 font-medium w-10"><span class="sr-only">Actions</span></th>}
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-800">
+      {tunes.length === 0 ? (
+        <tr>
+          <td colspan={columnCount} class="px-4 py-8 text-center text-gray-500">
+            {emptyMessage}
+          </td>
+        </tr>
+      ) : (
+        tunes.map((tune) => {
+          const typeLabel = resolveTuneTypeLabel(tune.gameSlug, tune.tuneType);
+          return (
+            <tr
+              class={`tune-row theme-${tune.gameSlug} hover:bg-gray-800/40 transition-colors`}
+              data-tune-id={tune.id}
+            >
+              <td class="px-3 py-2.5 align-middle max-w-[14rem]">
+                <a
+                  href={`/${tune.gameSlug}/tunes/${tune.id}`}
+                  class="block text-white font-medium hover:text-accent-300 transition-colors truncate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400"
+                >
+                  {tune.title}
+                </a>
+              </td>
+              <td class="px-3 py-2 align-middle text-gray-300 leading-tight">
+                <div class="text-accent-300 font-heading font-bold uppercase tracking-widest text-[11px]">
+                  {tune.carMake}
+                </div>
+                <div class="text-gray-400 text-xs whitespace-nowrap">
+                  {formatCarSubtitle(tune.carYear, tune.carModel)}
+                </div>
+              </td>
+              <td class="px-3 py-2.5 align-middle whitespace-nowrap">
+                <InGameClassPill
+                  carClass={tune.carClass}
+                  piRating={tune.piRating}
+                  size="sm"
+                />
+              </td>
+              <td class="px-3 py-2.5 align-middle whitespace-nowrap">
+                <span
+                  class="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-emerald-900/50 text-emerald-300 border border-emerald-700"
+                >
+                  {typeLabel}
+                </span>
+              </td>
+              <td class="px-3 py-2.5 align-middle whitespace-nowrap">
+                {tune.drivetrain ? (
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-gray-200 border border-gray-600 bg-gray-950/70"
+                  >
+                    {tune.drivetrain}
+                  </span>
+                ) : (
+                  <span class="text-gray-600">&mdash;</span>
+                )}
+              </td>
+              <td class="px-3 py-2.5 align-middle whitespace-nowrap max-w-[9rem]">
+                <a
+                  href={`/u/${tune.userId}`}
+                  class="block text-xs text-gray-400 hover:text-accent-300 transition-colors truncate"
+                >
+                  {tune.creatorGamertag}
+                </a>
+              </td>
+              <td class="px-3 py-2.5 align-middle whitespace-nowrap">
+                <ShareCodeDisplay code={tune.shareCode} size="sm" />
+              </td>
+              <td class="px-3 py-2.5 align-middle whitespace-nowrap text-right">
+                <div class="inline-flex">
+                  <StarButton
+                    client:load
+                    tuneId={tune.id}
+                    initialStarred={starredTuneIds.has(tune.id)}
+                    initialCount={tune.starCount}
+                    isLoggedIn={isLoggedIn}
+                  />
+                </div>
+              </td>
+              {ownerActions && (
+                <td class="px-2 py-2.5 align-middle whitespace-nowrap text-right">
+                  <TuneCardOwnerMenu
+                    client:load
+                    tuneId={tune.id}
+                    gameSlug={tune.gameSlug}
+                    tuneTitle={tune.title}
+                  />
+                </td>
+              )}
+            </tr>
+          );
+        })
+      )}
+    </tbody>
+  </table>
+</div>

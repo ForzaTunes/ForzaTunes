@@ -1,0 +1,25 @@
+---
+interface Props {
+  currentSlug: string | null;
+  games: Array<{ slug: string; name: string; shortName?: string }>;
+}
+
+const { currentSlug, games } = Astro.props;
+---
+
+<nav class="flex gap-1.5">
+  {games.map((game) => {
+    const isActive = game.slug === currentSlug;
+    const classes = isActive
+      ? "bg-accent-600 text-white"
+      : "bg-gray-800 text-gray-300 hover:bg-gray-700";
+    return (
+      <a
+        href={`/${game.slug}/`}
+        class={`px-3 py-1.5 text-xs font-medium transition-colors ${classes}`}
+      >
+        {game.shortName ?? game.name}
+      </a>
+    );
+  })}
+</nav>

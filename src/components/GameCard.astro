@@ -1,0 +1,34 @@
+---
+interface Props {
+  slug: string;
+  name: string;
+  tagline?: string;
+}
+
+const { slug, name, tagline } = Astro.props;
+---
+
+<a
+  href={`/${slug}/`}
+  class={`theme-${slug} group relative block border border-gray-700 bg-gray-900 overflow-hidden hover:border-accent-500 transition-colors`}
+>
+  <div class="h-1.5 bg-gradient-to-r from-accent-600 via-accent-400 to-accent-600" />
+  <div class="flex items-start justify-between gap-4 p-6 pb-7">
+    <div class="min-w-0">
+      <h3 class="text-xl sm:text-2xl font-heading font-extrabold italic uppercase tracking-wider text-white leading-[0.95] [text-wrap:balance] group-hover:text-accent-400 transition-colors">
+        {name}
+      </h3>
+      {tagline && (
+        <p class="mt-2 text-sm text-gray-400">{tagline}</p>
+      )}
+    </div>
+    <svg
+      class="w-5 h-5 shrink-0 text-gray-500 group-hover:text-accent-400 group-hover:translate-x-1 transition-all"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path fill-rule="evenodd" d="M7.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L11.586 10 7.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+    </svg>
+  </div>
+</a>

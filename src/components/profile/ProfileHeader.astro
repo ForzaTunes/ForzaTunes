@@ -1,0 +1,42 @@
+---
+import GamertagEditor from "./GamertagEditor";
+import type { UserProfile } from "../../lib/models";
+
+interface Props {
+  profileUser: UserProfile;
+  isOwner: boolean;
+  ownerDiscordUsername?: string;
+}
+
+const { profileUser, isOwner, ownerDiscordUsername } = Astro.props;
+
+const displayName = profileUser.forzaGamertag ?? profileUser.username;
+const initial = displayName.charAt(0).toUpperCase();
+---
+
+<div class="flex items-start gap-4 mb-6">
+  {profileUser.avatarUrl ? (
+    <img
+      src={profileUser.avatarUrl}
+      alt={displayName}
+      class="w-20 h-20 object-cover border border-gray-700 shrink-0"
+    />
+  ) : (
+    <div class="w-20 h-20 bg-gray-800 border border-gray-700 flex items-center justify-center text-3xl font-heading uppercase tracking-widest text-gray-300 shrink-0">
+      {initial}
+    </div>
+  )}
+  <div class="space-y-1 min-w-0 flex-1">
+    <h1 class="font-heading uppercase tracking-widest text-2xl text-white leading-tight truncate">
+      {displayName}
+    </h1>
+    {isOwner && (
+      <p class="text-xs text-gray-500">
+        Signed in via Discord as <span class="text-gray-300">{ownerDiscordUsername ?? profileUser.username}</span>.
+      </p>
+    )}
+    {isOwner && (
+      <GamertagEditor client:load initial={profileUser.forzaGamertag} />
+    )}
+  </div>
+</div>

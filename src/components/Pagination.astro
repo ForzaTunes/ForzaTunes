@@ -1,0 +1,41 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+  searchParams: URLSearchParams;
+}
+
+const { currentPage, totalPages, baseUrl, searchParams } = Astro.props;
+
+if (totalPages <= 1) return;
+
+function buildPageUrl(page: number): string {
+  const params = new URLSearchParams(searchParams);
+  params.set("page", String(page));
+  return `${baseUrl}?${params.toString()}`;
+}
+
+const hasPrev = currentPage > 1;
+const hasNext = currentPage < totalPages;
+---
+
+<nav class="flex items-center justify-center gap-4 mt-8">
+  <a
+    href={hasPrev ? buildPageUrl(currentPage - 1) : undefined}
+    class={`px-4 py-2 bg-gray-800 text-gray-300 hover:bg-accent-600 hover:text-white transition-colors ${!hasPrev ? "opacity-50 pointer-events-none" : ""}`}
+    aria-disabled={!hasPrev}
+  >
+    Previous
+  </a>
+  <span class="text-sm text-gray-400">
+    Page {currentPage} of {totalPages}
+  </span>
+  <a
+    href={hasNext ? buildPageUrl(currentPage + 1) : undefined}
+    class={`px-4 py-2 bg-gray-800 text-gray-300 hover:bg-accent-600 hover:text-white transition-colors ${!hasNext ? "opacity-50 pointer-events-none" : ""}`}
+    aria-disabled={!hasNext}
+  >
+    Next
+  </a>
+</nav>

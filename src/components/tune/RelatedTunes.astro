@@ -1,0 +1,47 @@
+---
+import TuneGrid from "../TuneGrid.astro";
+import type { TuneWithDetails, GameConfig } from "../../lib/models";
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  tunes: Array<TuneWithDetails & { gameSlug: string }>;
+  starredTuneIds?: Set<number>;
+  isLoggedIn?: boolean;
+  gameConfigsBySlug?: Map<string, GameConfig>;
+}
+
+const {
+  title,
+  subtitle,
+  tunes,
+  starredTuneIds,
+  isLoggedIn,
+  gameConfigsBySlug,
+} = Astro.props;
+---
+
+{tunes.length > 0 && (
+  <section>
+    <div class="mb-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+      <h2 class="inline-flex items-stretch text-sm font-heading font-bold uppercase tracking-widest border border-gray-700 divide-x divide-gray-700 overflow-hidden">
+        <span class="px-3 py-1.5 bg-gray-900 text-accent-400 flex items-center" aria-hidden="true">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </span>
+        <span class="px-3 py-1.5 bg-gray-950/60 text-white flex items-center">{title}</span>
+      </h2>
+      {subtitle && (
+        <p class="text-sm text-gray-400">{subtitle}</p>
+      )}
+      <div class="grow min-w-[2rem] h-px bg-gray-700" aria-hidden="true"></div>
+    </div>
+    <TuneGrid
+      tunes={tunes}
+      starredTuneIds={starredTuneIds}
+      isLoggedIn={isLoggedIn}
+      gameConfigsBySlug={gameConfigsBySlug}
+    />
+  </section>
+)}

@@ -1,0 +1,96 @@
+---
+import { env } from "cloudflare:workers";
+import { DiscordAuthProvider } from "../../lib/auth/DiscordAuthProvider";
+import { AuthCoordinator } from "../../lib/auth/AuthCoordinator";
+import { SessionManager } from "../../lib/auth/SessionManager";
+import { RedirectValidator } from "../../lib/auth/RedirectValidator";
+import { DatabaseClient } from "../../lib/db/DatabaseClient";
+import { authLimiter } from "../../lib/middleware/rateLimiters";
+import AuthErrorPage from "../../components/auth/AuthErrorPage.astro";
+
+const clientIp = Astro.request.headers.get("cf-connecting-ip") ?? "unknown";
+const limitOk = await authLimiter.check(clientIp);
+
+const url = new URL(Astro.request.url);
+const code = url.searchParams.get("code");
+const state = url.searchParams.get("state");
+
+let errorMessage: string | null = null;
+
+if (!limitOk) {
+  errorMessage = "Too many requests. Please wait a minute and try again.";
+}
+
+if (!errorMessage && (!code || !state)) {
+  errorMessage = "Missing code or state parameter. Please start the login flow again.";
+}
+
+const stateCookie = Astro.cookies.get("ft_oauth_state")?.value;
+if (!errorMessage && !stateCookie) {
+  errorMessage = "Your login session expired. Please try logging in again.";
+}
+
+let statePayload: { state: string; provider: string; redirect: string } | null = null;
+if (!errorMessage) {
+  try {
+    statePayload = JSON.parse(stateCookie!);
+  } catch {
+    errorMessage = "Invalid login session cookie. Please try again.";
+  }
+}
+
+if (!errorMessage && statePayload!.state !== state) {
+  errorMessage = "OAuth state mismatch. Please try logging in again.";
+}
+
+if (!errorMessage) {
+  Astro.cookies.delete("ft_oauth_state", { path: "/" });
+
+  const db = new DatabaseClient(env.DB);
+
+  const discord = new DiscordAuthProvider(
+    env.DISCORD_CLIENT_ID,
+    env.DISCORD_CLIENT_SECRET,
+    new URL("/auth/callback", url.origin).toString(),
+  );
+
+  const providers = new Map([["discord", discord]]);
+  const coordinator = new AuthCoordinator(db, providers);
+  const sessionManager = new SessionManager(env.SESSION_SECRET);
+  const redirectValidator = new RedirectValidator();
+
+  try {
+    const user = await coordinator.authenticateUser(
+      statePayload!.provider,
+      code!,
+    );
+
+    if (user.bannedAt) {
+      return Astro.redirect("/banned");
+    }
+
+    const sessionValue = await sessionManager.createSession({
+      id: user.id,
+      username: user.username,
+      avatarUrl: user.avatarUrl,
+    });
+
+    const cookieConfig = sessionManager.getCookieConfig();
+    Astro.cookies.set(cookieConfig.name, sessionValue, {
+      httpOnly: cookieConfig.httpOnly,
+      secure: cookieConfig.secure,
+      sameSite: cookieConfig.sameSite,
+      path: cookieConfig.path,
+      maxAge: cookieConfig.maxAge,
+    });
+
+    const safeRedirect = redirectValidator.sanitize(statePayload!.redirect);
+    return Astro.redirect(safeRedirect);
+  } catch (error) {
+    console.error("Authentication failed:", error);
+    errorMessage = "Authentication failed. Please try again.";
+  }
+}
+---
+
+<AuthErrorPage message={errorMessage!} />

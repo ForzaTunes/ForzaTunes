@@ -1,0 +1,12 @@
+---
+import ShareCodeCopy from "./tune/ShareCodeCopy";
+
+interface Props {
+  code: string;
+  size?: "sm" | "lg";
+}
+
+const { code, size = "sm" } = Astro.props;
+---
+
+<ShareCodeCopy client:load code={code} size={size} />

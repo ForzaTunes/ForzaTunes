@@ -1,0 +1,47 @@
+---
+import { env } from "cloudflare:workers";
+import { DiscordAuthProvider } from "../../lib/auth/DiscordAuthProvider";
+import { RedirectValidator } from "../../lib/auth/RedirectValidator";
+import { authLimiter } from "../../lib/middleware/rateLimiters";
+
+const clientIp = Astro.request.headers.get("cf-connecting-ip") ?? "unknown";
+if (!(await authLimiter.check(clientIp))) {
+  return new Response("Too many login attempts. Try again in a minute.", { status: 429 });
+}
+
+const url = new URL(Astro.request.url);
+const providerName = url.searchParams.get("provider") ?? "discord";
+const rawRedirect = url.searchParams.get("redirect");
+const redirectValidator = new RedirectValidator();
+const redirectAfterAuth = redirectValidator.sanitize(rawRedirect);
+
+if (providerName !== "discord") {
+  return new Response("Unsupported provider", { status: 400 });
+}
+
+const discord = new DiscordAuthProvider(
+  env.DISCORD_CLIENT_ID,
+  env.DISCORD_CLIENT_SECRET,
+  new URL("/auth/callback", url.origin).toString(),
+);
+
+const stateBytes = crypto.getRandomValues(new Uint8Array(32));
+const state = Array.from(stateBytes, (b) => b.toString(16).padStart(2, "0")).join("");
+
+const statePayload = JSON.stringify({
+  state,
+  provider: providerName,
+  redirect: redirectAfterAuth,
+});
+
+Astro.cookies.set("ft_oauth_state", statePayload, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "lax",
+  path: "/",
+  maxAge: 600,
+});
+
+const authUrl = discord.getAuthUrl(state);
+return Astro.redirect(authUrl);
+---

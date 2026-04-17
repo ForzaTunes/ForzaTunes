@@ -1,0 +1,94 @@
+---
+const images = [
+  "/images/hero/hero-1.jpg",
+  "/images/hero/hero-2.jpg",
+  "/images/hero/hero-3.jpg",
+  "/images/hero/hero-4.jpg",
+  "/images/hero/hero-5.jpg",
+  "/images/hero/hero-6.jpg",
+];
+---
+
+<section class="relative w-full h-[70vh] min-h-[480px] overflow-hidden">
+  {images.map((src, i) => (
+    <img
+      src={src}
+      alt=""
+      class="hero-slide absolute inset-0 w-full h-full object-cover object-[center_70%]"
+      style={`animation-delay: ${i * 8}s`}
+      loading="eager"
+      fetchpriority={i === 0 ? "high" : "low"}
+    />
+  ))}
+
+  <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/70 to-gray-950/20" />
+  <div class="absolute inset-0 bg-gradient-to-r from-gray-950/80 via-transparent to-transparent" />
+
+  <div class="relative h-full max-w-6xl mx-auto px-6 flex flex-col justify-end pb-16">
+    <h1 class="text-5xl sm:text-7xl font-heading font-extrabold italic uppercase tracking-widest text-white drop-shadow-lg">
+      FORZA<span class="text-accent-400">TUNES</span>
+    </h1>
+    <p class="mt-3 text-lg sm:text-xl text-gray-200 max-w-lg drop-shadow">
+      Community-built tunes for Forza. Browse, share, and star
+      the best setups — made by players, for players.
+    </p>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <a
+        href="/fh5/tunes/"
+        class="bg-accent-600 px-6 py-3 text-sm font-semibold text-white hover:bg-accent-500 transition-colors"
+      >
+        Browse Tunes
+      </a>
+      <a
+        href="/fh6/"
+        class="border border-white/30 bg-white/10 backdrop-blur-sm px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
+      >
+        Explore FH6
+      </a>
+    </div>
+
+    <div class="mt-6 flex gap-2" role="tablist" aria-label="Hero image indicator">
+      {images.map((_, i) => (
+        <span
+          role="tab"
+          aria-label={`Slide ${i + 1} of ${images.length}`}
+          class="hero-dot block w-2 h-2 rounded-full bg-white/30"
+          style={`animation-delay: ${i * 8}s`}
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-slide {
+    opacity: 0;
+    animation: heroFade 48s infinite;
+  }
+
+  /*
+   * 6 images, 8s each, 48s total cycle.
+   * Each image: fade-in 0–4%, hold 4–17%, fade-out 17–21%, hidden 21–100%.
+   * The fade-out of image N overlaps exactly with the fade-in of image N+1,
+   * producing a true crossfade with no pop or background bleed.
+   */
+  @keyframes heroFade {
+    0%   { opacity: 0; }
+    4%   { opacity: 1; }
+    17%  { opacity: 1; }
+    21%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .hero-dot {
+    animation: dotPulse 48s infinite;
+  }
+
+  @keyframes dotPulse {
+    0%   { background-color: rgb(255 255 255 / 0.2); }
+    4%   { background-color: rgb(255 255 255 / 0.8); }
+    17%  { background-color: rgb(255 255 255 / 0.8); }
+    21%  { background-color: rgb(255 255 255 / 0.2); }
+    100% { background-color: rgb(255 255 255 / 0.2); }
+  }
+</style>

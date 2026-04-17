@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: "Exo 2", system-ui, sans-serif;
+
+  --color-accent-300: #f07fb2;
+  --color-accent-400: #e83382;
+  --color-accent-500: #d42d76;
+  --color-accent-600: #b82568;
+  --color-accent-700: #9a1f57;
+  --color-accent-900: #581236;
+}
+
+html {
+  scrollbar-color: var(--color-accent-600) transparent;
+}
+
+html::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--color-accent-700);
+  border: 1px solid #0a0a0a;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-500);
+}
+
+.theme-fh5 {
+  --color-accent-300: #fdba74;
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
+  --color-accent-700: #c2410c;
+  --color-accent-900: #7c2d12;
+
+  --fz-class-D: #61a9c8;
+  --fz-class-C: #cc9813;
+  --fz-class-B: #cc5519;
+  --fz-class-A: #ea3358;
+  --fz-class-S1: #a24ec0;
+  --fz-class-S2: #3f59ae;
+  --fz-class-X: #30a32a;
+
+  --fz-class-D-fg: #ffffff;
+  --fz-class-C-fg: #ffffff;
+  --fz-class-B-fg: #ffffff;
+  --fz-class-A-fg: #ffffff;
+  --fz-class-S1-fg: #ffffff;
+  --fz-class-S2-fg: #ffffff;
+  --fz-class-X-fg: #ffffff;
+}
+
+.theme-fm {
+  --color-accent-300: #fca5a5;
+  --color-accent-400: #f87171;
+  --color-accent-500: #ef4444;
+  --color-accent-600: #dc2626;
+  --color-accent-700: #b91c1c;
+  --color-accent-900: #7f1d1d;
+
+  --fz-class-E: #ea3358;
+  --fz-class-D: #61a9c8;
+  --fz-class-C: #cc9813;
+  --fz-class-B: #cc5519;
+  --fz-class-A: #c94a1a;
+  --fz-class-S: #a24ec0;
+  --fz-class-R: #3f59ae;
+  --fz-class-P: #30a32a;
+  --fz-class-X: #7a9e5b;
+
+  --fz-class-E-fg: #ffffff;
+  --fz-class-D-fg: #ffffff;
+  --fz-class-C-fg: #ffffff;
+  --fz-class-B-fg: #ffffff;
+  --fz-class-A-fg: #ffffff;
+  --fz-class-S-fg: #ffffff;
+  --fz-class-R-fg: #ffffff;
+  --fz-class-P-fg: #ffffff;
+  --fz-class-X-fg: #ffffff;
+}
+
+.theme-fh6 {
+  --color-accent-300: #f9a8d4;
+  --color-accent-400: #f472b6;
+  --color-accent-500: #ec4899;
+  --color-accent-600: #db2777;
+  --color-accent-700: #be185d;
+  --color-accent-900: #831843;
+
+  --fz-class-D: #8a8f98;
+  --fz-class-C: #61a9c8;
+  --fz-class-B: #cc9813;
+  --fz-class-A: #cc5519;
+  --fz-class-S1: #ea3358;
+  --fz-class-S2: #a24ec0;
+  --fz-class-R: #30a32a;
+  --fz-class-X: #3f59ae;
+
+  --fz-class-D-fg: #ffffff;
+  --fz-class-C-fg: #ffffff;
+  --fz-class-B-fg: #ffffff;
+  --fz-class-A-fg: #ffffff;
+  --fz-class-S1-fg: #ffffff;
+  --fz-class-S2-fg: #ffffff;
+  --fz-class-R-fg: #ffffff;
+  --fz-class-X-fg: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-400);
+  outline-offset: 2px;
+}
+
+.fz-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent-600) transparent;
+}
+
+.fz-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.fz-scroll::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.fz-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-accent-700);
+  border: 1px solid #0a0a0a;
+}
+
+.fz-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-500);
+}
+
+/*
+ * Softens the four edges of a background car photo so screenshot-style
+ * crops blend into their surrounding card/hero without hard seams.
+ * Horizontal fade is slightly wider than vertical because car subjects
+ * are usually centered horizontally while filling the frame top to bottom.
+ */
+.fz-edge-fade {
+  --fz-edge-fade-h: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  --fz-edge-fade-v: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+  -webkit-mask-image: var(--fz-edge-fade-h), var(--fz-edge-fade-v);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--fz-edge-fade-h), var(--fz-edge-fade-v);
+  mask-composite: intersect;
+}

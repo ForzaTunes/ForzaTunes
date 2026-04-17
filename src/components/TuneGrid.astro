@@ -1,0 +1,69 @@
+---
+import TuneCard from "./TuneCard.astro";
+import type { TuneWithDetails, GameConfig } from "../lib/models";
+
+interface Props {
+  tunes: Array<TuneWithDetails & { gameSlug: string }>;
+  starredTuneIds?: Set<number>;
+  isLoggedIn?: boolean;
+  emptyMessage?: string;
+  tuneTypeLabels?: Map<string, string>;
+  gameConfigsBySlug?: Map<string, GameConfig>;
+  ownerActions?: boolean;
+}
+
+const {
+  tunes,
+  starredTuneIds = new Set<number>(),
+  isLoggedIn = false,
+  emptyMessage = "No tunes found.",
+  tuneTypeLabels,
+  gameConfigsBySlug,
+  ownerActions = false,
+} = Astro.props;
+
+function resolveTuneTypeLabel(
+  gameSlug: string,
+  tuneType: string,
+): string {
+  if (tuneTypeLabels?.has(tuneType)) {
+    return tuneTypeLabels.get(tuneType)!;
+  }
+  const config = gameConfigsBySlug?.get(gameSlug);
+  if (config) {
+    const match = config.tuneTypes.find((t) => t.value === tuneType);
+    if (match) return match.label;
+  }
+  return tuneType;
+}
+---
+
+{tunes.length > 0 ? (
+  <div class="view-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {tunes.map((tune) => (
+      <TuneCard
+        id={tune.id}
+        gameSlug={tune.gameSlug}
+        title={tune.title}
+        shareCode={tune.shareCode}
+        carMake={tune.carMake}
+        carModel={tune.carModel}
+        carYear={tune.carYear}
+        carClass={tune.carClass}
+        carImageUrl={tune.carImageUrl}
+        tuneType={tune.tuneType}
+        tuneTypeLabel={resolveTuneTypeLabel(tune.gameSlug, tune.tuneType)}
+        piRating={tune.piRating}
+        drivetrain={tune.drivetrain}
+        starCount={tune.starCount}
+        creatorGamertag={tune.creatorGamertag}
+        creatorUserId={tune.userId}
+        isStarred={starredTuneIds.has(tune.id)}
+        isLoggedIn={isLoggedIn}
+        ownerActions={ownerActions}
+      />
+    ))}
+  </div>
+) : (
+  <p class="text-center text-gray-500 py-12">{emptyMessage}</p>
+)}

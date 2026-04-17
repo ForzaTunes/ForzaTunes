@@ -1,0 +1,114 @@
+---
+import InGameClassPill from "../submit/InGameClassPill";
+import TuneMetaChips from "./TuneMetaChips.astro";
+import ReportButton from "./ReportButton";
+import { formatCarSubtitle } from "../../lib/utils/formatCarSubtitle";
+
+interface Props {
+  tuneId: number;
+  title: string;
+  carMake: string;
+  carModel: string;
+  carYear: number;
+  carClass: string;
+  carImageUrl?: string | null;
+  piRating: number;
+  creatorGamertag: string;
+  tuneTypeLabel: string;
+  drivetrain?: string | null;
+  carCategory?: string | null;
+  trackName?: string | null;
+  trackFieldLabel?: string;
+  isLoggedIn: boolean;
+  isOwner: boolean;
+}
+
+const {
+  tuneId,
+  title,
+  carMake,
+  carModel,
+  carYear,
+  carClass,
+  carImageUrl,
+  piRating,
+  creatorGamertag,
+  tuneTypeLabel,
+  drivetrain,
+  carCategory,
+  trackName,
+  trackFieldLabel,
+  isLoggedIn,
+  isOwner,
+} = Astro.props;
+
+const canReport = isLoggedIn && !isOwner;
+---
+
+<section class="relative overflow-hidden border border-gray-700 bg-gray-900">
+  {carImageUrl ? (
+    <img
+      src={carImageUrl}
+      alt=""
+      aria-hidden="true"
+      loading="eager"
+      class="fz-edge-fade pointer-events-none absolute inset-y-0 left-[15%] w-[70%] h-full object-cover object-[center_75%] -scale-x-100 select-none"
+    />
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgb(17,24,39,1)_0%,rgba(17,24,39,0.25)_40%,rgba(17,24,39,0.45)_100%)]"
+    ></div>
+  ) : (
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent-900/30 via-transparent to-transparent"
+    ></div>
+  )}
+
+  <div class="relative flex flex-col gap-4 p-6 sm:p-8 min-h-[16rem]">
+    <div class="flex items-start justify-between gap-4">
+      <div class="min-w-0 flex-1">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-white leading-tight">
+          {title}
+        </h1>
+        <p class="mt-2 text-base sm:text-lg text-gray-300 truncate">
+          {formatCarSubtitle(carYear, carModel)}
+        </p>
+        <p class="mt-2 text-sm text-gray-400">
+          by <span class="text-gray-200">{creatorGamertag}</span>
+        </p>
+      </div>
+      <div class="shrink-0 flex flex-col items-end gap-2">
+        <InGameClassPill
+          carClass={carClass}
+          piRating={piRating}
+          size="lg"
+          flipped
+        />
+        <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-accent-300 border border-accent-700 bg-gray-950/70 px-3 py-1">
+          {carMake}
+        </span>
+      </div>
+    </div>
+
+    <div class="mt-auto flex items-end justify-between gap-3">
+      <div class="shrink-0">
+        {canReport && (
+          <ReportButton
+            client:load
+            tuneId={tuneId}
+            isLoggedIn={isLoggedIn}
+            variant="icon"
+          />
+        )}
+      </div>
+      <TuneMetaChips
+        tuneTypeLabel={tuneTypeLabel}
+        drivetrain={drivetrain}
+        carCategory={carCategory}
+        trackName={trackName}
+        trackFieldLabel={trackFieldLabel}
+      />
+    </div>
+  </div>
+</section>

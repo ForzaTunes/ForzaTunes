@@ -1,0 +1,106 @@
+---
+import PageShell from "../../../components/layout/PageShell.astro";
+import TuneDetail from "../../../components/TuneDetail.astro";
+import type { TuneWithDetails } from "../../../lib/models";
+
+const { game: gameSlug, id } = Astro.params;
+const { games, tunes, stars } = Astro.locals.managers;
+
+const game = await games.getBySlug(gameSlug!);
+if (!game) return Astro.redirect("/404");
+
+const config = games.getConfig(gameSlug!)!;
+
+const tune = await tunes.getById(Number(id));
+if (!tune || tune.gameId !== game.id) return Astro.redirect("/404");
+
+const user = Astro.locals.user;
+const isStarred = user ? await stars.isStarred(user.id, tune.id) : false;
+const isOwner = !!user && user.id === tune.userId;
+
+const tuneTypeLabel = config.tuneTypes.find(
+  (t) => t.value === tune.tuneType,
+)?.label ?? tune.tuneType;
+
+const RELATED_LIMIT = 3;
+const currentTuneId = tune.id;
+
+const [moreByCreatorRaw, similarRaw] = await Promise.all([
+  tunes.getByUser(tune.userId, RELATED_LIMIT + 1, 0, { gameId: tune.gameId }),
+  tunes.search(
+    tune.gameId,
+    { carClass: tune.carClass, tuneType: tune.tuneType },
+    "most_starred",
+    { page: 1, pageSize: RELATED_LIMIT + 1 },
+  ),
+]);
+
+const moreByCreator: TuneWithDetails[] = moreByCreatorRaw
+  .filter((t) => t.id !== currentTuneId)
+  .slice(0, RELATED_LIMIT);
+const similarTunes: TuneWithDetails[] = similarRaw.items
+  .filter((t) => t.id !== currentTuneId)
+  .slice(0, RELATED_LIMIT);
+
+const relatedIds = [
+  ...moreByCreator.map((t) => t.id),
+  ...similarTunes.map((t) => t.id),
+];
+const relatedStarredTuneIds = user && relatedIds.length > 0
+  ? await stars.getUserStarredTuneIds(user.id, relatedIds)
+  : new Set<number>();
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  name: tune.title,
+  description:
+    tune.description ??
+    `${tuneTypeLabel} tune for ${tune.carYear} ${tune.carMake} ${tune.carModel}`,
+  author: { "@type": "Person", name: tune.creatorGamertag },
+  datePublished: tune.createdAt,
+  ...(tune.starCount > 0
+    ? {
+        interactionStatistic: {
+          "@type": "InteractionCounter",
+          interactionType: {
+            "@type": "LikeAction",
+          },
+          userInteractionCount: tune.starCount,
+        },
+      }
+    : {}),
+  isPartOf: {
+    "@type": "WebSite",
+    name: "ForzaTunes",
+    url: "https://forzatunes.com",
+  },
+};
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=60, stale-while-revalidate=300",
+);
+---
+
+<PageShell
+  title={`${tune.title} for ${tune.carYear} ${tune.carMake} ${tune.carModel} — ForzaTunes`}
+  description={`${tuneTypeLabel} tune for ${tune.carYear} ${tune.carMake} ${tune.carModel} in ${game.name}. Share code: ${tune.shareCode}`}
+  currentGameSlug={gameSlug}
+  canonicalUrl={`/${gameSlug}/tunes/${tune.id}`}
+  structuredData={structuredData}
+>
+  <div class="max-w-6xl mx-auto pt-4 pb-8 px-4">
+    <TuneDetail
+      tune={tune}
+      gameSlug={gameSlug!}
+      gameConfig={config}
+      isStarred={isStarred}
+      isLoggedIn={!!user}
+      isOwner={isOwner}
+      moreByCreator={moreByCreator}
+      similarTunes={similarTunes}
+      relatedStarredTuneIds={relatedStarredTuneIds}
+    />
+  </div>
+</PageShell>

@@ -1,0 +1,148 @@
+---
+export const prerender = true;
+
+import PageShell from "../components/layout/PageShell.astro";
+
+const lastUpdated = "April 17, 2026";
+---
+
+<PageShell
+  title="Privacy Policy — ForzaTunes"
+  description="Privacy Policy for ForzaTunes."
+  canonicalUrl="/privacy"
+>
+  <div class="max-w-3xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-heading font-bold text-white mb-2">Privacy Policy</h1>
+    <p class="text-sm text-gray-500 mb-8">Last updated: {lastUpdated}</p>
+
+    <div class="prose prose-invert prose-gray max-w-none space-y-8 text-gray-300 text-sm leading-relaxed">
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">1. Information We Collect</h2>
+        <p>
+          ForzaTunes is operated by the open-source ForzaTunes community. We keep
+          the data we collect to the minimum we need to run the site.
+        </p>
+        <p>When you sign in with Discord, we store:</p>
+        <ul class="list-disc list-inside space-y-1 text-gray-400">
+          <li>Your Discord user ID (numeric identifier)</li>
+          <li>Your Discord username</li>
+          <li>Your Discord avatar URL</li>
+        </ul>
+        <p>When you submit a tune, we also store:</p>
+        <ul class="list-disc list-inside space-y-1 text-gray-400">
+          <li>The submitted share code, title, description, tune metadata, and in-game gamertag you enter</li>
+          <li>The time of submission and updates</li>
+        </ul>
+        <p>
+          When you interact with the site (stars, reports), we store a reference to the
+          action and the user who took it. We log your IP address temporarily for rate
+          limiting and abuse prevention. IP addresses are not retained in a way that
+          identifies you long-term.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">2. How We Use Information</h2>
+        <ul class="list-disc list-inside space-y-1 text-gray-400">
+          <li>Authenticate you by linking your Discord account to your ForzaTunes profile.</li>
+          <li>Display your username and avatar on tunes you submit.</li>
+          <li>Let you star tunes, report tunes, and manage your submissions.</li>
+          <li>Prevent abuse via rate limiting, content filtering, and moderation.</li>
+        </ul>
+        <p>
+          We do not sell your information, run advertising, or use tracking analytics.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">3. Data Storage</h2>
+        <p>
+          Data is stored in Cloudflare D1 (SQLite at the edge) and served through
+          Cloudflare's global network. Some data may be replicated across Cloudflare
+          edge locations to serve requests close to you. Cloudflare's processing of
+          your data is governed by Cloudflare's own privacy and security practices.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">4. Third-Party Services</h2>
+        <p>ForzaTunes relies on a small number of third parties:</p>
+        <ul class="list-disc list-inside space-y-1 text-gray-400">
+          <li>
+            Discord for OAuth authentication — subject to
+            <a href="https://discord.com/privacy" target="_blank" rel="noopener noreferrer"
+               class="text-accent-400 hover:text-accent-300 underline">Discord's Privacy Policy</a>.
+          </li>
+          <li>
+            Cloudflare for hosting, DNS, CDN, and database — subject to
+            <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer"
+               class="text-accent-400 hover:text-accent-300 underline">Cloudflare's Privacy Policy</a>.
+          </li>
+        </ul>
+        <p>We do not use analytics, advertising, or tracking services.</p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">5. Cookies</h2>
+        <p>
+          We use a single session cookie (<code class="text-gray-400">ft_session</code>).
+          It is encrypted with AES-GCM, marked <code class="text-gray-400">httpOnly</code>,
+          <code class="text-gray-400">secure</code>, and <code class="text-gray-400">SameSite=Lax</code>.
+          It contains your user ID, username, avatar URL, and an expiration timestamp,
+          and is valid for seven days. We also set a short-lived cookie during OAuth
+          login to prevent CSRF attacks; it is deleted immediately after login completes.
+        </p>
+        <p>We do not use tracking, analytics, or advertising cookies.</p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">6. Data Retention and Deletion</h2>
+        <p>
+          Account data is retained as long as your account exists. To request account
+          deletion, open an issue on our GitHub repository linked below. Upon deletion,
+          your user record and all associated tunes, stars, and reports are removed.
+          Removed tunes are deleted; we do not retain soft-deleted copies.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">7. Children's Privacy</h2>
+        <p>
+          ForzaTunes requires Discord authentication, and Discord requires users to
+          be at least 13 years old (or higher per local law). We do not knowingly
+          collect information from children under 13.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">8. Compliance with Microsoft Game Content Usage Rules</h2>
+        <p>
+          ForzaTunes is built in compliance with Microsoft's Game Content Usage Rules.
+          We display community-submitted tune share codes and metadata referring to
+          Forza games. We do not claim to represent, or be affiliated with, Microsoft
+          or Playground Games. Manufacturer logos and other restricted assets are not used.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">9. Changes to This Policy</h2>
+        <p>
+          We may update this policy as the project evolves. Material changes will be
+          communicated on the site. Continued use after changes constitutes acceptance.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">10. Contact</h2>
+        <p>
+          Questions about this policy, or requests concerning your data? Open an issue on
+          <a href="https://github.com/forzatunes/forzatunes/issues" target="_blank"
+             rel="noopener noreferrer"
+             class="text-accent-400 hover:text-accent-300 underline">GitHub</a>.
+        </p>
+      </section>
+
+    </div>
+  </div>
+</PageShell>

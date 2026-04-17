@@ -1,0 +1,75 @@
+---
+import PageShell from "../../components/layout/PageShell.astro";
+import ProfileView from "../../components/profile/ProfileView.astro";
+import { ProfileDataLoader } from "../../lib/profile/ProfileDataLoader";
+import type { TuneSortField } from "../../lib/models";
+
+const viewer = Astro.locals.user;
+if (!viewer) {
+  return Astro.redirect("/auth/login?redirect=/profile");
+}
+
+const VALID_SORTS: readonly TuneSortField[] = [
+  "newest",
+  "most_starred",
+  "pi_asc",
+  "pi_desc",
+];
+
+const url = new URL(Astro.request.url);
+const activeTab = url.searchParams.get("tab") === "starred"
+  ? "starred"
+  : "tunes";
+const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
+const limit = 12;
+
+const gameSlug = url.searchParams.get("game") ?? null;
+const sortParam = url.searchParams.get("sort") as TuneSortField | null;
+const activeSort: TuneSortField =
+  sortParam && VALID_SORTS.includes(sortParam) ? sortParam : "newest";
+
+const loader = new ProfileDataLoader(Astro.locals.managers);
+const data = await loader.load({
+  profileUserId: viewer.id,
+  viewerId: viewer.id,
+  activeTab,
+  page,
+  limit,
+  gameSlug,
+  sort: activeSort,
+});
+
+if (!data.profileUser) {
+  return Astro.redirect("/auth/login?redirect=/profile");
+}
+
+const activeGameSlug =
+  gameSlug && data.availableGames.some((g) => g.slug === gameSlug)
+    ? gameSlug
+    : null;
+
+const viewerDisplayName = data.profileUser.forzaGamertag ?? data.profileUser.username;
+---
+
+<PageShell
+  title={`${viewerDisplayName} — ForzaTunes`}
+  description="View and manage your submitted tunes on ForzaTunes."
+>
+  <ProfileView
+    profileUser={data.profileUser}
+    isOwner={true}
+    ownerDiscordUsername={viewer.username}
+    stats={data.stats}
+    tunes={data.tunes}
+    starredTuneIds={data.starredTuneIds}
+    gameConfigsBySlug={data.gameConfigsBySlug}
+    availableGames={data.availableGames}
+    activeTab={activeTab}
+    activeGameSlug={activeGameSlug}
+    activeSort={activeSort}
+    page={page}
+    limit={limit}
+    baseUrl="/profile"
+    viewerLoggedIn={true}
+  />
+</PageShell>

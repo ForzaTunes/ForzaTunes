@@ -1,0 +1,40 @@
+{
+  "name": "forzatunes",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "wrangler pages dev dist",
+    "db:migrate:local": "wrangler d1 migrations apply forzatunes-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply forzatunes-db --remote",
+    "scrape:cars": "npx tsx scripts/scrape-cars.ts",
+    "db:seed:local": "npx tsx src/lib/db/run-seed.ts --local",
+    "db:seed:remote": "npx tsx src/lib/db/run-seed.ts --remote"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@astrojs/cloudflare": "^13.1.9",
+    "@astrojs/react": "^5.0.3",
+    "@astrojs/sitemap": "^3.7.2",
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^6.1.6",
+    "fuse.js": "^7.3.0",
+    "obscenity": "^0.4.6",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "tailwindcss": "^4.2.2"
+  },
+  "overrides": {
+    "vite": "^7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260415.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.83.0"
+  }
+}

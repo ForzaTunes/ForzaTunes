@@ -1,0 +1,60 @@
+---
+import CarsMetaStrip from "./CarsMetaStrip.astro";
+import CarsToolbar from "./CarsToolbar";
+import CarGrid from "./CarGrid.astro";
+import CarTable from "../CarTable.astro";
+import type { Car } from "../../lib/models";
+
+interface Props {
+  gameSlug: string;
+  gameName: string;
+  cars: Car[];
+  makes: string[];
+  currentMake: string;
+}
+
+const { gameSlug, gameName, cars, makes, currentMake } = Astro.props;
+const totalCount = cars.length;
+---
+
+<div data-cars-view data-view="grid" class="space-y-4">
+  <CarsMetaStrip
+    gameSlug={gameSlug}
+    gameName={gameName}
+    totalCount={totalCount}
+    filteredMake={currentMake || undefined}
+  />
+
+  <CarsToolbar
+    client:load
+    makes={makes}
+    currentMake={currentMake}
+    totalCount={totalCount}
+    searchIndex={cars.map((c) => ({
+      id: c.id,
+      make: c.make,
+      model: c.model,
+      year: c.year,
+    }))}
+  />
+
+  {totalCount > 0 ? (
+    <>
+      <CarGrid cars={cars} gameSlug={gameSlug} />
+      <CarTable cars={cars} gameSlug={gameSlug} />
+    </>
+  ) : (
+    <p class="text-gray-500 py-8 text-center">
+      No cars found{currentMake ? ` for ${currentMake}` : ""}. Try a different filter.
+    </p>
+  )}
+</div>
+
+<style is:global>
+  [data-cars-view][data-view="grid"] .view-table {
+    display: none;
+  }
+  [data-cars-view][data-view="table"] .view-grid {
+    display: none;
+  }
+</style>

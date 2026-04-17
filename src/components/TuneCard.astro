@@ -1,0 +1,114 @@
+---
+import ShareCodeDisplay from "./ShareCodeDisplay.astro";
+import InGameClassPill from "./submit/InGameClassPill";
+import StarButton from "./tune/StarButton";
+import TuneCardOwnerMenu from "./profile/TuneCardOwnerMenu";
+import { formatCarSubtitle } from "../lib/utils/formatCarSubtitle";
+
+interface Props {
+  id: number;
+  gameSlug: string;
+  title: string;
+  shareCode: string;
+  carMake: string;
+  carModel: string;
+  carYear: number;
+  carClass: string;
+  carImageUrl?: string | null;
+  tuneType: string;
+  tuneTypeLabel?: string;
+  piRating: number;
+  drivetrain?: string | null;
+  starCount: number;
+  creatorGamertag: string;
+  creatorUserId: number;
+  isStarred: boolean;
+  isLoggedIn: boolean;
+  ownerActions?: boolean;
+}
+
+const {
+  id, gameSlug, title, shareCode, carMake, carModel, carYear,
+  carClass, carImageUrl, tuneType, tuneTypeLabel, piRating, drivetrain,
+  starCount, creatorGamertag, creatorUserId, isStarred, isLoggedIn,
+  ownerActions = false,
+} = Astro.props;
+
+const displayTuneType = tuneTypeLabel ?? tuneType;
+---
+
+<div class={`theme-${gameSlug} group relative h-full flex flex-col overflow-hidden border border-gray-700 bg-gray-900 hover:border-accent-500 transition-colors`}>
+  <a
+    href={`/${gameSlug}/tunes/${id}`}
+    class="relative flex flex-1 flex-col p-4 overflow-hidden focus-visible:ring-2 focus-visible:ring-accent-400 focus-visible:outline-none"
+  >
+    {carImageUrl ? (
+      <img
+        src={carImageUrl}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        class="fz-edge-fade pointer-events-none absolute inset-y-0 right-0 h-full w-2/3 object-cover object-right opacity-50 select-none [transform:scale(-1.1,1.1)]"
+      />
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgb(17,24,39,1)_0%,rgba(17,24,39,0.45)_40%,rgba(17,24,39,0.65)_100%)]"
+      ></div>
+    ) : (
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent-900/30 via-transparent to-transparent"
+      ></div>
+    )}
+
+    <div class="relative flex items-start justify-between gap-3">
+      <h3 class="text-lg font-semibold text-white line-clamp-2 min-w-0 flex-1">{title}</h3>
+      <InGameClassPill carClass={carClass} piRating={piRating} size="md" flipped />
+    </div>
+
+    <div class="relative mt-1 flex items-center justify-between gap-3">
+      <p class="text-sm text-gray-400 truncate">{formatCarSubtitle(carYear, carModel)}</p>
+      <span class="shrink-0 text-[10px] font-bold uppercase tracking-widest text-accent-300 border border-accent-700 bg-gray-950/70 px-2 py-0.5">
+        {carMake}
+      </span>
+    </div>
+
+    <div class="relative mt-3 flex items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-1.5 min-w-0">
+        <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-emerald-900/50 text-emerald-300 border border-emerald-700">
+          {displayTuneType}
+        </span>
+      </div>
+      {drivetrain && (
+        <span class="shrink-0 inline-flex items-center px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-gray-200 border border-gray-600 bg-gray-950/70">
+          {drivetrain}
+        </span>
+      )}
+    </div>
+  </a>
+
+  <div class="relative flex items-center gap-3 border-t border-gray-800 bg-gray-950/60 px-4 py-2">
+    <ShareCodeDisplay code={shareCode} size="sm" />
+    <a
+      href={`/u/${creatorUserId}`}
+      class="flex-1 min-w-0 truncate text-xs text-gray-400 hover:text-accent-300 transition-colors"
+    >
+      by {creatorGamertag}
+    </a>
+    <StarButton
+      client:load
+      tuneId={id}
+      initialStarred={isStarred}
+      initialCount={starCount}
+      isLoggedIn={isLoggedIn}
+    />
+    {ownerActions && (
+      <TuneCardOwnerMenu
+        client:load
+        tuneId={id}
+        gameSlug={gameSlug}
+        tuneTitle={title}
+      />
+    )}
+  </div>
+</div>

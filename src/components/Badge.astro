@@ -1,0 +1,19 @@
+---
+interface Props {
+  label: string;
+  variant?: "default" | "class" | "type" | "game";
+}
+
+const { label, variant = "default" } = Astro.props;
+
+const variantClasses: Record<string, string> = {
+  default: "bg-gray-700 text-gray-300",
+  class: "bg-purple-900/50 text-purple-300 border border-purple-700",
+  type: "bg-emerald-900/50 text-emerald-300 border border-emerald-700",
+  game: "bg-accent-900/50 text-accent-300 border border-accent-700",
+};
+---
+
+<span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variantClasses[variant]}`}>
+  {label}
+</span>

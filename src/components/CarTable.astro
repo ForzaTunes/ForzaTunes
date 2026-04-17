@@ -1,0 +1,80 @@
+---
+import type { Car } from "../lib/models";
+
+interface Props {
+  cars: Car[];
+  gameSlug: string;
+}
+
+const { cars, gameSlug } = Astro.props;
+---
+
+<div class="view-table border border-gray-700 bg-gray-900 overflow-x-auto">
+  <table class="w-full text-sm text-left" id="car-table">
+    <thead
+      class="text-[11px] font-heading uppercase tracking-widest text-gray-400 border-b border-gray-700 bg-gray-950/50"
+    >
+      <tr>
+        <th class="px-4 py-3 font-medium">Year</th>
+        <th class="px-4 py-3 font-medium">Make</th>
+        <th class="px-4 py-3 font-medium">Model</th>
+        <th class="px-4 py-3 font-medium">Category</th>
+        <th class="px-4 py-3 font-medium text-right">Tunes</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-800">
+      {cars.map((car) => {
+        const tunesHref = `/${gameSlug}/tunes?car=${car.id}`;
+        const searchHaystack = `${car.make} ${car.model} ${car.year}`.toLowerCase();
+        return (
+          <tr
+            class="car-row hover:bg-gray-800/40 transition-colors"
+            data-car-id={car.id}
+            data-make={car.make}
+            data-search={searchHaystack}
+          >
+            <td class="px-4 py-2.5 text-gray-400 tabular-nums">{car.year}</td>
+            <td class="px-4 py-2.5 text-accent-300 font-heading font-bold uppercase tracking-widest text-xs">
+              {car.make}
+            </td>
+            <td class="px-4 py-2.5 text-white font-medium">{car.model}</td>
+            <td class="px-4 py-2.5">
+              {car.category ? (
+                <span
+                  class="inline-flex items-center px-1.5 py-0.5 text-[10px] font-heading font-bold uppercase tracking-widest text-gray-300 border border-gray-700 bg-gray-950/70"
+                >
+                  {car.category}
+                </span>
+              ) : (
+                <span class="text-gray-600">&mdash;</span>
+              )}
+            </td>
+            <td class="px-4 py-2.5 text-right">
+              <a
+                href={tunesHref}
+                class="inline-flex items-center gap-1 text-[11px] font-heading uppercase tracking-widest text-accent-300 hover:text-accent-200 transition-colors focus-visible:ring-2 focus-visible:ring-accent-400 focus-visible:outline-none"
+                aria-label={`View tunes for ${car.year} ${car.make} ${car.model}`}
+              >
+                View Tunes
+                <svg
+                  class="w-3.5 h-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </a>
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>

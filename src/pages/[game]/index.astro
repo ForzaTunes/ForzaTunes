@@ -1,0 +1,33 @@
+---
+import PageShell from "../../components/layout/PageShell.astro";
+import GameHomeView from "../../components/home/game/GameHomeView.astro";
+import { GameHomeDataLoader } from "../../lib/home/GameHomeDataLoader";
+
+const { game: gameSlug } = Astro.params;
+
+const loader = new GameHomeDataLoader(Astro.locals.managers);
+const data = await loader.load({
+  gameSlug: gameSlug!,
+  viewerId: Astro.locals.user?.id ?? null,
+});
+
+if (!data) return Astro.redirect("/404");
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=300, stale-while-revalidate=600",
+);
+---
+
+<PageShell
+  title={`${data.game.name} — ForzaTunes`}
+  description={`The ${data.game.name} community hub on ForzaTunes. Browse, share, and star community tunes.`}
+  currentGameSlug={gameSlug}
+  canonicalUrl={`/${gameSlug}/`}
+>
+  <GameHomeView
+    data={data}
+    gameSlug={gameSlug!}
+    isLoggedIn={Astro.locals.user != null}
+  />
+</PageShell>

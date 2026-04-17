@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="4" fill="#030712"/>
+  <text x="16" y="23" text-anchor="middle" font-family="'Exo 2', system-ui, sans-serif" font-weight="800" font-style="italic" font-size="19" letter-spacing="-0.5">
+    <tspan fill="#f3f4f6">F</tspan><tspan fill="#e83382">T</tspan>
+  </text>
+</svg>

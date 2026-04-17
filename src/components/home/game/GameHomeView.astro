@@ -1,0 +1,73 @@
+---
+import GameHeroPanel from "./GameHeroPanel.astro";
+import GameSpotlightPanel from "./GameSpotlightPanel.astro";
+import GameCountdownPanel from "./GameCountdownPanel.astro";
+import GameTuneTypes from "./GameTuneTypes.astro";
+import GameMetaStrip from "./GameMetaStrip.astro";
+import GameRecentTunes from "./GameRecentTunes.astro";
+import type { GameHomeData } from "../../../lib/home/GameHomeDataLoader";
+
+interface Props {
+  data: GameHomeData;
+  gameSlug: string;
+  isLoggedIn: boolean;
+}
+
+const { data, gameSlug, isLoggedIn } = Astro.props;
+const {
+  game,
+  config,
+  tuneCount,
+  spotlight,
+  spotlightSource,
+  recentTunes,
+  isPreLaunch,
+  daysUntilPlayable,
+  viewerStarredIds,
+} = data;
+
+const tagline = isPreLaunch
+  ? "Get ready for launch. Prep your tunes early and share them with the community on day one."
+  : `The ${game.name} community hub. Browse, share, and star the tunes making laps right now.`;
+---
+
+<div class="max-w-6xl mx-auto px-4 py-6 sm:py-8 space-y-6">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5 md:min-h-[20rem]">
+    <div class="md:col-span-5">
+      <GameHeroPanel
+        gameName={game.name}
+        gameSlug={gameSlug}
+        tagline={tagline}
+      />
+    </div>
+    <div class="md:col-span-7">
+      {isPreLaunch && config.playableFromUtc && daysUntilPlayable !== null ? (
+        <GameCountdownPanel
+          gameName={game.name}
+          gameSlug={gameSlug}
+          daysUntilPlayable={daysUntilPlayable}
+          playableFromUtc={config.playableFromUtc}
+          releaseDate={config.releaseDate}
+        />
+      ) : (
+        <GameSpotlightPanel
+          gameSlug={gameSlug}
+          tune={spotlight}
+          source={spotlightSource}
+        />
+      )}
+    </div>
+  </div>
+
+  <GameTuneTypes gameSlug={gameSlug} tuneTypes={config.tuneTypes} />
+
+  <GameMetaStrip gameSlug={gameSlug} tuneCount={tuneCount} />
+
+  <GameRecentTunes
+    gameSlug={gameSlug}
+    tunes={recentTunes}
+    starredTuneIds={viewerStarredIds}
+    isLoggedIn={isLoggedIn}
+    config={config}
+  />
+</div>

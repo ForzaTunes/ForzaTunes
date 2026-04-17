@@ -1,0 +1,41 @@
+---
+interface Props {
+  tuneCount: number;
+  starsReceived: number;
+  memberSince: string;
+}
+
+const { tuneCount, starsReceived, memberSince } = Astro.props;
+
+function formatMemberSince(iso: string): string {
+  if (!iso) return "—";
+  const parsed = Date.parse(iso);
+  if (!Number.isFinite(parsed)) return "—";
+  const date = new Date(parsed);
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+  });
+}
+
+const items = [
+  { label: "Tunes", value: tuneCount.toLocaleString() },
+  { label: "Stars Received", value: starsReceived.toLocaleString() },
+  { label: "Member Since", value: formatMemberSince(memberSince) },
+];
+---
+
+<div class="grid grid-cols-3 border border-gray-700 bg-gray-900 mb-6">
+  {items.map((item, idx) => (
+    <div
+      class={`px-4 py-3 flex flex-col gap-1 ${idx < items.length - 1 ? "border-r border-gray-700" : ""}`}
+    >
+      <span class="font-heading uppercase tracking-widest text-[10px] text-gray-500">
+        {item.label}
+      </span>
+      <span class="font-heading uppercase tracking-wider text-lg text-accent-400">
+        {item.value}
+      </span>
+    </div>
+  ))}
+</div>

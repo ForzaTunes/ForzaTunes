@@ -1,0 +1,30 @@
+---
+export const prerender = true;
+import PageShell from "../components/layout/PageShell.astro";
+---
+
+<PageShell
+  title="Page Not Found — ForzaTunes"
+  description="The page you're looking for doesn't exist."
+>
+  <div class="mx-auto max-w-4xl px-4 py-24 text-center">
+    <h1 class="text-6xl font-bold text-gray-300">404</h1>
+    <p class="mt-4 text-xl text-gray-400">
+      This page doesn't exist. Maybe the tune got deleted?
+    </p>
+    <div class="mt-8 flex justify-center gap-4">
+      <a
+        href="/"
+        class="bg-accent-600 px-6 py-3 font-medium text-white hover:bg-accent-500 transition-colors"
+      >
+        Go Home
+      </a>
+      <a
+        href="/fh5/tunes/"
+        class="border border-gray-700 px-6 py-3 font-medium text-gray-300 hover:border-gray-500 transition-colors"
+      >
+        Browse Tunes
+      </a>
+    </div>
+  </div>
+</PageShell>

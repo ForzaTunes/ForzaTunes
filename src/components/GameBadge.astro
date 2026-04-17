@@ -1,0 +1,20 @@
+---
+interface Props {
+  slug: string;
+  name: string;
+}
+
+const { slug, name } = Astro.props;
+
+const colorMap: Record<string, string> = {
+  fh5: "bg-orange-900/50 text-orange-300 border border-orange-700",
+  fm: "bg-sky-900/50 text-sky-300 border border-sky-700",
+  fh6: "bg-pink-900/50 text-pink-300 border border-pink-700",
+};
+
+const colorClasses = colorMap[slug] ?? "bg-gray-700 text-gray-300 border border-gray-600";
+---
+
+<span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClasses}`}>
+  {name}
+</span>

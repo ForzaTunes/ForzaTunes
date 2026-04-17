@@ -1,0 +1,69 @@
+---
+import FallingSakura from "../effects/FallingSakura";
+
+const { games } = Astro.locals.managers;
+const fh6 = games.getConfig("fh6");
+const releaseDate = fh6?.releaseDate ? new Date(fh6.releaseDate) : null;
+const now = new Date();
+
+const releaseLabel = releaseDate
+  ? releaseDate.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
+  : null;
+
+const isReleased = releaseDate ? releaseDate <= now : false;
+---
+
+{!isReleased && (
+<section class="relative overflow-hidden border-t border-accent-700/30">
+  <div class="absolute inset-0 bg-gradient-to-r from-accent-900/20 via-transparent to-accent-900/20" />
+
+  <FallingSakura client:load petalCount={10} fallSpeed={0.5} opacity={0.3} />
+
+  <div class="relative max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <div>
+      {releaseLabel && (
+        <p class="text-xs font-heading font-semibold italic uppercase tracking-[0.3em] text-accent-400">
+          Coming {releaseLabel}
+        </p>
+      )}
+      <h2 class="mt-2 text-3xl sm:text-4xl font-heading font-extrabold italic uppercase tracking-wider text-white leading-[0.95] [text-wrap:balance]">
+        Get Ready for <span class="text-accent-400">Horizon 6</span>
+      </h2>
+      <p class="mt-4 text-gray-300 max-w-xl leading-relaxed">
+        Japan awaits — touge mountain passes, neon-lit Tokyo streets,
+        and hundreds of cars to tune. When the map opens, the
+        community will be here to share their first setups.
+      </p>
+      <div class="mt-6 flex flex-wrap items-center gap-4">
+        <a
+          href="/fh6/"
+          class="bg-accent-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-500 transition-colors"
+        >
+          Explore FH6 Tunes
+        </a>
+      </div>
+    </div>
+    <div class="relative mt-8 md:mt-0">
+      <a
+        href="https://forza.net/forzahorizon6"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="block group border border-accent-700/50 hover:border-accent-500 transition-colors"
+      >
+        <img
+          src="/images/promo/fh6.jpg"
+          alt="Forza Horizon 6 Screenshot"
+          class="w-full h-auto object-cover"
+        />
+        <span class="block mt-2 text-center text-xs text-gray-500 group-hover:text-accent-400 transition-colors pb-2">
+          Visit the official Forza Horizon 6 page
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+)}

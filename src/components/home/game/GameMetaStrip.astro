@@ -1,0 +1,33 @@
+---
+interface Props {
+  gameSlug: string;
+  tuneCount: number;
+}
+
+const { gameSlug, tuneCount } = Astro.props;
+
+const countLabel = tuneCount === 1 ? "Community Tune" : "Community Tunes";
+---
+
+<section
+  aria-label="Community stats"
+  class="flex items-center justify-between gap-4 border border-gray-700 bg-gray-900 px-4 py-2.5"
+>
+  <div class="flex items-baseline gap-2 min-w-0">
+    <span class="text-base font-heading font-bold text-white tabular-nums">
+      {tuneCount.toLocaleString()}
+    </span>
+    <span class="text-[11px] font-heading uppercase tracking-widest text-gray-400 truncate">
+      {countLabel}
+    </span>
+  </div>
+  <a
+    href={`/${gameSlug}/tunes/`}
+    class="shrink-0 inline-flex items-center gap-1 text-[11px] font-heading uppercase tracking-widest text-accent-300 hover:text-accent-200 transition-colors"
+  >
+    View All
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  </a>
+</section>

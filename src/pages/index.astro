@@ -1,0 +1,96 @@
+---
+import PageShell from "../components/layout/PageShell.astro";
+import HeroCarousel from "../components/home/HeroCarousel.astro";
+import FH6Promo from "../components/home/FH6Promo.astro";
+import TrendingTunes from "../components/home/TrendingTunes.astro";
+import GameCard from "../components/GameCard.astro";
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=300, stale-while-revalidate=900",
+);
+---
+
+<PageShell
+  title="ForzaTunes — Community Tunes for Forza"
+  description="Browse, share, and star community-created tunes for Forza Horizon 5, Forza Motorsport, and Forza Horizon 6."
+  canonicalUrl="/"
+>
+  <HeroCarousel />
+
+  <TrendingTunes />
+
+  <FH6Promo />
+
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+      <div>
+        <p class="text-xs font-heading font-semibold italic uppercase tracking-[0.3em] text-accent-400">
+          Community Hubs
+        </p>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-heading font-extrabold italic uppercase tracking-wider text-white leading-[0.95]">
+          Pick Your <span class="text-accent-400">Game</span>
+        </h2>
+      </div>
+      <p class="text-sm text-gray-400 max-w-sm">
+        Each title has its own tunes, cars, and community.
+      </p>
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <GameCard
+        slug="fh6"
+        name="Forza Horizon 6"
+        tagline="Discover Japan"
+      />
+      <GameCard
+        slug="fh5"
+        name="Forza Horizon 5"
+        tagline="Mexico's open roads"
+      />
+      <GameCard
+        slug="fm"
+        name="Forza Motorsport"
+        tagline="Track precision"
+      />
+    </div>
+  </section>
+
+  <section class="border-t border-gray-800">
+    <div class="max-w-6xl mx-auto px-6 py-16 text-center">
+      <p class="text-xs font-heading font-semibold italic uppercase tracking-[0.3em] text-accent-400">
+        By the Community
+      </p>
+      <h2 class="mt-2 text-3xl sm:text-4xl font-heading font-extrabold italic uppercase tracking-wider text-white leading-[0.95]">
+        Open Source. <span class="text-accent-400">Player Built.</span>
+      </h2>
+      <p class="mt-5 mx-auto max-w-2xl text-gray-400 leading-relaxed">
+        ForzaTunes is made by players who wanted a clean, ad-free home
+        for Forza tunes. The code is public and the roadmap is
+        community-driven — anyone can help shape what comes next.
+      </p>
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <a
+          href="https://github.com/forzatunes/forzatunes"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 bg-accent-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-500 transition-colors"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 .5C5.73.5.67 5.56.67 11.83c0 5.01 3.24 9.25 7.74 10.76.57.1.78-.25.78-.55v-2.13c-3.15.69-3.82-1.33-3.82-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.14.08 1.74 1.17 1.74 1.17 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.51-.29-5.16-1.26-5.16-5.6 0-1.24.44-2.25 1.16-3.05-.12-.29-.5-1.44.11-3 0 0 .94-.3 3.08 1.17a10.66 10.66 0 015.6 0c2.14-1.47 3.08-1.17 3.08-1.17.61 1.56.23 2.71.11 3 .72.8 1.16 1.81 1.16 3.05 0 4.36-2.66 5.31-5.18 5.59.4.35.76 1.04.76 2.1v3.12c0 .3.21.66.79.55 4.5-1.51 7.73-5.75 7.73-10.76C23.33 5.56 18.27.5 12 .5z" />
+          </svg>
+          Contribute on GitHub
+        </a>
+        <a
+          href="/fh5/submit"
+          class="inline-flex items-center gap-2 border border-gray-700 bg-gray-900 px-5 py-2.5 text-sm font-semibold text-gray-200 hover:border-accent-500 hover:text-white transition-colors"
+        >
+          Submit a Tune
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M7.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L11.586 10 7.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageShell>

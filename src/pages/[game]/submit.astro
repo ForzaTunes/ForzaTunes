@@ -1,0 +1,178 @@
+---
+import PageShell from "../../components/layout/PageShell.astro";
+import TuneForm from "../../components/submit/TuneForm";
+import FirstTimeGamertag from "../../components/submit/FirstTimeGamertag";
+import { CarClassResolver } from "../../lib/managers/CarClassResolver";
+import { TuneValidator } from "../../lib/validators/TuneValidator";
+import type { TuneSubmission } from "../../lib/validators/TuneValidator";
+import { submitLimiter } from "../../lib/middleware/rateLimiters";
+import { contentFilter } from "../../lib/validators/contentFilterInstance";
+
+const { game: gameSlug } = Astro.params;
+
+if (!Astro.locals.user) {
+  return Astro.redirect(
+    `/auth/login?redirect=${encodeURIComponent(`/${gameSlug}/submit`)}`,
+  );
+}
+
+const {
+  games: gameManager,
+  cars: carManager,
+  tunes: tuneManager,
+} = Astro.locals.managers;
+
+const game = await gameManager.getBySlug(gameSlug!);
+if (!game) return Astro.redirect("/404");
+
+const gameConfig = gameManager.getConfig(gameSlug!);
+if (!gameConfig) return Astro.redirect("/404");
+
+const cars = await carManager.getByGame(game.id);
+
+interface GroupedCar {
+  id: number;
+  make: string;
+  model: string;
+  year: number;
+  category: string | null;
+  imageUrl: string | null;
+}
+const carsByMake: Record<string, GroupedCar[]> = {};
+for (const car of cars) {
+  const group = carsByMake[car.make] ?? [];
+  group.push({
+    id: car.id,
+    make: car.make,
+    model: car.model,
+    year: car.year,
+    category: car.category,
+    imageUrl: car.imageUrl,
+  });
+  carsByMake[car.make] = group;
+}
+
+const forzaGamertag = Astro.locals.user.forzaGamertag;
+const needsGamertag = !forzaGamertag || forzaGamertag.trim().length === 0;
+
+let formError: string | null = null;
+
+if (Astro.request.method === "POST" && !needsGamertag) {
+  const clientIp = Astro.request.headers.get("cf-connecting-ip") ?? "unknown";
+  const limitOk = await submitLimiter.check(clientIp);
+  if (!limitOk) {
+    formError = "Rate limit exceeded. You can submit up to 10 tunes per hour.";
+  }
+
+  if (!formError) {
+    const formData = await Astro.request.formData();
+
+    const input: TuneSubmission = {
+      shareCode: formData.get("shareCode") as string,
+      carId: Number(formData.get("carId")),
+      title: formData.get("title") as string,
+      description: (formData.get("description") as string) || undefined,
+      tuneType: formData.get("tuneType") as string,
+      piRating: Number(formData.get("piRating")),
+      drivetrain: (formData.get("drivetrain") as string) || undefined,
+      trackName: (formData.get("trackName") as string) || undefined,
+    };
+
+    const validator = new TuneValidator();
+    const result = validator.validate(input, gameConfig);
+
+    if (!result.valid) {
+      formError = result.errors.join(", ");
+    } else if (
+      !contentFilter.checkMultiple([
+        input.title,
+        input.description ?? "",
+        input.trackName ?? "",
+      ]).clean
+    ) {
+      formError = "Submission contains inappropriate language.";
+    } else {
+      const selectedCar = await carManager.getById(input.carId);
+      if (!selectedCar || selectedCar.gameId !== game.id) {
+        formError = "Selected car does not belong to this game.";
+      } else {
+        try {
+          const classResolver = new CarClassResolver(gameManager);
+          const derivedClass = classResolver.resolveClass(
+            gameSlug!,
+            input.piRating,
+          );
+
+          const newTuneId = await tuneManager.create({
+            gameId: game.id,
+            shareCode: result.normalized!.shareCode,
+            carId: input.carId,
+            title: input.title.trim(),
+            description: input.description?.trim() ?? null,
+            tuneType: input.tuneType,
+            creatorGamertag: forzaGamertag!.trim(),
+            piRating: input.piRating,
+            carClass: derivedClass,
+            drivetrain: result.normalized!.drivetrain,
+            trackName: result.normalized!.trackName,
+            userId: Astro.locals.user.id,
+          });
+
+          return Astro.redirect(`/${gameSlug}/tunes/${newTuneId}`);
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : "Unknown error";
+          if (message.includes("UNIQUE constraint")) {
+            formError = "A tune with this share code already exists for this game.";
+          } else {
+            formError = "Failed to submit tune. Please try again.";
+          }
+        }
+      }
+    }
+  }
+}
+---
+
+<PageShell
+  title={`Submit a Tune — ForzaTunes`}
+  description={`Share your ${game.name} tune with the community.`}
+  currentGameSlug={gameSlug}
+  canonicalUrl={`/${gameSlug}/submit`}
+>
+  <div class="max-w-6xl mx-auto py-8 px-4">
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 mb-6">
+      <h1 class="font-heading uppercase tracking-widest text-sm text-gray-200">
+        New {game.name} Tune
+      </h1>
+      {forzaGamertag && (
+        <span class="font-heading uppercase tracking-widest text-xs text-gray-500">
+          Submitting as <span class="text-accent-400">{forzaGamertag}</span>
+          {" · "}
+          <a
+            href="/profile"
+            class="text-gray-400 hover:text-accent-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 transition-colors"
+          >
+            Change
+          </a>
+        </span>
+      )}
+    </div>
+
+    {needsGamertag ? (
+      <FirstTimeGamertag client:load />
+    ) : (
+      <TuneForm
+        client:load
+        gameSlug={gameSlug!}
+        tuneTypes={gameConfig.tuneTypes}
+        classRanges={gameConfig.classRanges}
+        carsByMake={carsByMake}
+        piRange={gameConfig.piRange}
+        shareCodeLength={gameConfig.shareCodeLength}
+        trackFieldLabel={gameConfig.trackFieldLabel ?? "Track / Event (optional)"}
+        trackFieldHint={gameConfig.trackFieldHint ?? null}
+        serverError={formError}
+      />
+    )}
+  </div>
+</PageShell>

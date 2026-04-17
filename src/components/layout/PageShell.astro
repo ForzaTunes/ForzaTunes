@@ -1,0 +1,83 @@
+---
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
+import "../../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentGameSlug?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  ogType?: "website" | "article";
+  structuredData?: Record<string, unknown>;
+}
+
+const {
+  title = "ForzaTunes",
+  description = "Community tunes for Forza",
+  currentGameSlug,
+  canonicalUrl,
+  ogImage = "/og-default.png",
+  ogType = "website",
+  structuredData,
+} = Astro.props;
+
+const siteUrl = "https://forzatunes.com";
+const resolvedCanonical = canonicalUrl ?? Astro.url.pathname;
+const fullCanonical = resolvedCanonical.startsWith("http")
+  ? resolvedCanonical
+  : `${siteUrl}${resolvedCanonical}`;
+const fullOgImage = ogImage.startsWith("http")
+  ? ogImage
+  : `${siteUrl}${ogImage}`;
+---
+
+<!doctype html>
+<html lang="en" class={currentGameSlug ? `theme-${currentGameSlug}` : ""}>
+  <head>
+    <style is:inline>
+      html {
+        scrollbar-gutter: stable;
+        scrollbar-width: thin;
+        overflow-y: scroll;
+      }
+      html::-webkit-scrollbar { width: 10px; height: 10px; }
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={fullCanonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700;800&display=swap" rel="stylesheet" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={fullCanonical} />
+    <meta property="og:image" content={fullOgImage} />
+    <meta property="og:site_name" content="ForzaTunes" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={fullOgImage} />
+
+    {structuredData && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(structuredData)}
+      />
+    )}
+  </head>
+  <body class="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
+    <Header currentGameSlug={currentGameSlug} user={Astro.locals.user} />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer gameSlug={currentGameSlug} />
+  </body>
+</html>

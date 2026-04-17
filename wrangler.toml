@@ -1,0 +1,8 @@
+name = "forzatunes"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "forzatunes-db"
+database_id = "<generated-after-d1-create>"
+migrations_dir = "src/lib/db/migrations"

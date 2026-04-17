@@ -1,0 +1,26 @@
+---
+import type { TuneTypeOption } from "../../../lib/models";
+
+interface Props {
+  gameSlug: string;
+  tuneTypes: readonly TuneTypeOption[];
+}
+
+const { gameSlug, tuneTypes } = Astro.props;
+
+const chipClasses =
+  "inline-flex items-center px-3 py-1.5 text-xs font-heading uppercase tracking-wider text-gray-200 border border-gray-700 bg-gray-900 hover:border-accent-500 hover:text-white hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 transition-colors whitespace-nowrap";
+---
+
+<section aria-label="Tune types" class="flex items-center gap-3">
+  <span class="shrink-0 text-[11px] font-heading uppercase tracking-widest text-gray-400">
+    Browse by type
+  </span>
+  <div class="flex flex-wrap items-center gap-2">
+    {tuneTypes.map((type) => (
+      <a href={`/${gameSlug}/tunes/?type=${type.value}`} class={chipClasses}>
+        {type.label}
+      </a>
+    ))}
+  </div>
+</section>

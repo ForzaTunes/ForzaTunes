@@ -1,0 +1,58 @@
+---
+import TuneGrid from "../TuneGrid.astro";
+import type { GameConfig, TuneWithDetails } from "../../lib/models";
+
+interface Props {
+  limit?: number;
+  sinceDays?: number;
+}
+
+const { limit = 6, sinceDays = 14 } = Astro.props;
+
+const { tunes, stars, games: gameManager } = Astro.locals.managers;
+
+let trending: TuneWithDetails[] = [];
+try {
+  trending = await tunes.getTrendingAcrossGames(sinceDays, limit);
+} catch {
+  trending = [];
+}
+
+const gameList = await gameManager.getAll();
+const gameSlugMap = new Map(gameList.map((g) => [g.id, g.slug]));
+const configs = gameManager.getAllConfigs();
+const gameConfigsBySlug = new Map<string, GameConfig>(
+  configs.map((c) => [c.slug, c]),
+);
+
+const user = Astro.locals.user;
+const tuneIds = trending.map((t) => t.id);
+const starredTuneIds = user
+  ? await stars.getUserStarredTuneIds(user.id, tuneIds)
+  : new Set<number>();
+
+const tunesWithSlug = trending.map((t) => ({
+  ...t,
+  gameSlug: gameSlugMap.get(t.gameId) ?? "fh5",
+}));
+---
+
+{trending.length > 0 && (
+  <section class="max-w-6xl mx-auto px-6 py-12">
+    <div class="flex items-end justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-heading font-bold text-white">Trending Tunes</h2>
+        <p class="mt-1 text-sm text-gray-400">
+          Most-starred community tunes from the last {sinceDays} days.
+        </p>
+      </div>
+    </div>
+
+    <TuneGrid
+      tunes={tunesWithSlug}
+      starredTuneIds={starredTuneIds}
+      isLoggedIn={!!user}
+      gameConfigsBySlug={gameConfigsBySlug}
+    />
+  </section>
+)}

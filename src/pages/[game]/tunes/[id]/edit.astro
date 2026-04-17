@@ -1,0 +1,63 @@
+---
+import PageShell from "../../../../components/layout/PageShell.astro";
+import TuneEditForm from "../../../../components/submit/TuneEditForm";
+
+const { game: gameSlug, id } = Astro.params;
+
+if (!Astro.locals.user) {
+  return Astro.redirect(
+    `/auth/login?redirect=${encodeURIComponent(`/${gameSlug}/tunes/${id}/edit`)}`,
+  );
+}
+
+const { games, tunes } = Astro.locals.managers;
+const game = await games.getBySlug(gameSlug!);
+if (!game) return Astro.redirect("/404");
+
+const gameConfig = games.getConfig(gameSlug!);
+if (!gameConfig) return Astro.redirect("/404");
+
+const tune = await tunes.getById(Number(id));
+if (!tune || tune.gameId !== game.id) return Astro.redirect("/404");
+
+if (tune.userId !== Astro.locals.user.id) {
+  return Astro.redirect(`/${gameSlug}/tunes/${tune.id}`);
+}
+---
+
+<PageShell
+  title={`Edit ${tune.title} — ForzaTunes`}
+  description={`Edit your tune for ${game.name}.`}
+  currentGameSlug={gameSlug}
+  canonicalUrl={`/${gameSlug}/tunes/${tune.id}/edit`}
+>
+  <div class="max-w-2xl mx-auto py-8 px-4">
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 mb-2">
+      <h1 class="font-heading uppercase tracking-widest text-sm text-gray-200">
+        Edit Tune
+      </h1>
+    </div>
+    <p class="text-xs text-gray-500 mb-6">
+      Share code and car cannot be changed. Delete and resubmit if needed.
+    </p>
+
+    <TuneEditForm
+      client:load
+      initial={{
+        id: tune.id,
+        gameSlug: gameSlug!,
+        title: tune.title,
+        description: tune.description,
+        tuneType: tune.tuneType,
+        piRating: tune.piRating,
+        drivetrain: tune.drivetrain,
+        trackName: tune.trackName,
+      }}
+      tuneTypes={gameConfig.tuneTypes}
+      classRanges={gameConfig.classRanges}
+      piRange={gameConfig.piRange}
+      trackFieldLabel={gameConfig.trackFieldLabel ?? "Track / Event (optional)"}
+      trackFieldHint={gameConfig.trackFieldHint ?? null}
+    />
+  </div>
+</PageShell>

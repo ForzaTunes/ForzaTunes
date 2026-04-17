@@ -1,0 +1,122 @@
+---
+import InGameClassPill from "../../submit/InGameClassPill";
+import ShareCodeDisplay from "../../ShareCodeDisplay.astro";
+import { formatCarSubtitle } from "../../../lib/utils/formatCarSubtitle";
+import type { TuneWithDetails } from "../../../lib/models";
+
+interface Props {
+  gameSlug: string;
+  tune: TuneWithDetails | null;
+  source: "trending" | "all_time" | null;
+}
+
+const { gameSlug, tune, source } = Astro.props;
+
+const label = source === "trending" ? "Top This Week" : "All-Time Favourite";
+---
+
+<section
+  class="relative h-full flex flex-col border border-gray-700 bg-gray-900 overflow-hidden"
+  aria-label="Spotlight tune"
+>
+  {tune ? (
+    <>
+      <div class="absolute top-0 left-0 flex items-stretch z-10">
+        <span class="px-3.5 py-2 text-xs font-heading uppercase tracking-widest bg-accent-600 text-white">
+          {label}
+        </span>
+      </div>
+
+      <div class="absolute top-3 right-3 z-10 flex flex-col items-end gap-2">
+        <InGameClassPill
+          carClass={tune.carClass}
+          piRating={tune.piRating}
+          size="lg"
+          flipped
+        />
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 border border-gray-700">
+          <svg class="w-4 h-4 text-accent-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.163c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.956c.3.922-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.175 0l-3.37 2.448c-.784.57-1.838-.196-1.539-1.118l1.287-3.956a1 1 0 00-.364-1.118L2.05 9.384c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 00.95-.69l1.287-3.957z"/>
+          </svg>
+          <span class="font-heading font-bold text-sm tabular-nums text-white">
+            {tune.starCount}
+          </span>
+        </span>
+      </div>
+
+      {tune.carImageUrl ? (
+        <img
+          src={tune.carImageUrl}
+          alt=""
+          aria-hidden="true"
+          class="fz-edge-fade pointer-events-none absolute inset-y-0 right-0 h-full w-3/4 object-cover object-right -scale-x-100 select-none"
+        />
+      ) : (
+        <div
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent-900/30 via-transparent to-transparent"
+        ></div>
+      )}
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgb(17,24,39)_0%,rgba(17,24,39,0.75)_40%,rgba(17,24,39,0.15)_100%)]"
+      ></div>
+
+      <a
+        href={`/${gameSlug}/tunes/${tune.id}`}
+        class="relative flex flex-1 flex-col justify-between p-6 pt-14 focus-visible:ring-2 focus-visible:ring-accent-400 focus-visible:outline-none"
+      >
+        <div class="pr-28 sm:pr-32">
+          <h2 class="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-white line-clamp-2 leading-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
+            {tune.title}
+          </h2>
+          <p class="mt-2 text-base sm:text-lg text-gray-300 truncate">
+            {formatCarSubtitle(tune.carYear, tune.carModel)}
+          </p>
+        </div>
+
+        <div class="mt-6 flex items-center gap-2">
+          <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase tracking-widest text-accent-300 border border-accent-700 bg-gray-950/70">
+            {tune.carMake}
+          </span>
+          {tune.drivetrain && (
+            <span class="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase tracking-widest text-gray-200 border border-gray-600 bg-gray-950/70">
+              {tune.drivetrain}
+            </span>
+          )}
+        </div>
+      </a>
+
+      <div class="relative flex items-center gap-3 border-t border-gray-800 bg-gray-950/70 px-5 py-3">
+        <ShareCodeDisplay code={tune.shareCode} size="sm" />
+        <span class="flex-1 min-w-0 truncate text-sm text-gray-400">
+          by {tune.creatorGamertag}
+        </span>
+        <a
+          href={`/${gameSlug}/tunes/${tune.id}`}
+          class="text-xs font-heading uppercase tracking-widest text-accent-300 hover:text-accent-200 transition-colors"
+        >
+          Open &rarr;
+        </a>
+      </div>
+    </>
+  ) : (
+    <div class="relative flex flex-1 flex-col items-center justify-center p-6 text-center">
+      <div class="text-xs font-heading uppercase tracking-widest text-accent-400">
+        Be the First
+      </div>
+      <h2 class="mt-1.5 text-xl font-heading font-bold text-white">
+        No community tunes yet
+      </h2>
+      <p class="mt-1.5 max-w-sm text-sm text-gray-400">
+        Share your first tune and claim this week&rsquo;s spotlight.
+      </p>
+      <a
+        href={`/${gameSlug}/submit`}
+        class="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm font-heading uppercase tracking-wider text-white border border-gray-700 bg-gray-900 hover:border-accent-500 hover:bg-white/5 transition-colors"
+      >
+        Submit a Tune
+      </a>
+    </div>
+  )}
+</section>

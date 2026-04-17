@@ -1,0 +1,81 @@
+---
+interface Props {
+  gameName: string;
+  gameSlug: string;
+  tagline?: string;
+}
+
+const { gameName, gameSlug, tagline } = Astro.props;
+
+const ctaBarClasses =
+  "group relative flex items-center gap-3 px-4 py-3 text-sm font-heading uppercase tracking-wider text-white hover:bg-white/5 focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-400 transition-colors";
+
+const ctas = [
+  {
+    href: `/${gameSlug}/tunes/`,
+    label: "Browse Tunes",
+    icon: "list",
+  },
+  {
+    href: `/${gameSlug}/submit`,
+    label: "Submit a Tune",
+    icon: "plus",
+  },
+  {
+    href: `/${gameSlug}/cars/`,
+    label: "Browse Cars",
+    icon: "car",
+  },
+] as const;
+---
+
+<section
+  class="h-full flex flex-col border border-gray-700 bg-gray-900 overflow-hidden"
+  aria-label={`${gameName} overview`}
+>
+  <div class="flex-1 p-5 border-b border-gray-800">
+    <div class="text-xs font-heading uppercase tracking-widest text-accent-400">
+      Community Hub
+    </div>
+    <h1
+      class="mt-2 text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold italic uppercase tracking-wider text-white leading-[0.95] [text-wrap:balance]"
+    >
+      {gameName}
+    </h1>
+    {tagline && (
+      <p class="mt-2 text-sm text-gray-400">{tagline}</p>
+    )}
+  </div>
+
+  <nav class="flex flex-col divide-y divide-gray-800" aria-label="Quick actions">
+    {ctas.map((cta) => (
+      <a href={cta.href} class={ctaBarClasses}>
+        <span
+          aria-hidden="true"
+          class="absolute inset-y-0 left-0 w-0.5 bg-transparent group-hover:bg-accent-500 transition-colors"
+        ></span>
+        <span class="flex items-center justify-center w-7 h-7 text-accent-400 shrink-0">
+          {cta.icon === "list" && (
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+          {cta.icon === "plus" && (
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          )}
+          {cta.icon === "car" && (
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13l2-5a2 2 0 012-1.5h10a2 2 0 012 1.5l2 5M5 13h14v5a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1H8v1a1 1 0 01-1 1H6a1 1 0 01-1-1v-5zm2 2.5h.01M17 15.5h.01" />
+            </svg>
+          )}
+        </span>
+        <span class="flex-1 truncate">{cta.label}</span>
+        <svg class="w-4 h-4 text-gray-500 group-hover:text-accent-300 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    ))}
+  </nav>
+</section>

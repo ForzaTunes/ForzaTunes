@@ -1,0 +1,38 @@
+---
+export const prerender = true;
+
+import PageShell from "../components/layout/PageShell.astro";
+---
+
+<PageShell
+  title="Account Suspended — ForzaTunes"
+  description="Your account has been suspended."
+>
+  <div class="max-w-2xl mx-auto px-4 py-16 text-center">
+    <h1 class="text-3xl font-heading font-bold text-white mb-4">
+      Account Suspended
+    </h1>
+    <p class="text-gray-400 mb-6">
+      Your account has been suspended for violating our
+      <a href="/terms" class="text-accent-400 hover:text-accent-300 underline">Terms of Service</a>.
+      You can still browse tunes, but you cannot submit or star.
+    </p>
+    <p class="text-gray-500 text-sm mb-8">
+      If you believe this was a mistake, please reach out to us on
+      <a
+        href="https://github.com/forzatunes/forzatunes/issues"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-accent-400 hover:text-accent-300 underline"
+      >
+        GitHub
+      </a>.
+    </p>
+    <a
+      href="/"
+      class="inline-block px-6 py-2 bg-gray-700 hover:bg-gray-600 text-sm text-gray-300 transition-colors"
+    >
+      Back to Home
+    </a>
+  </div>
+</PageShell>

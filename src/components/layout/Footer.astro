@@ -1,0 +1,59 @@
+---
+interface Props {
+  gameSlug?: string;
+}
+
+const { gameSlug } = Astro.props;
+
+const GAME_ATTRIBUTIONS: Record<string, string> = {
+  fh5: "Forza Horizon 5",
+  fm: "Forza Motorsport",
+  fh6: "Forza Horizon 6",
+};
+
+const currentYear = new Date().getFullYear();
+const gameNames = gameSlug
+  ? [GAME_ATTRIBUTIONS[gameSlug]].filter(Boolean)
+  : Object.values(GAME_ATTRIBUTIONS);
+
+const linkClasses =
+  "text-gray-500 hover:text-gray-300 hover:underline underline-offset-2 transition-colors";
+---
+
+<footer
+  class="border-t border-gray-800 bg-gray-950 px-4 py-5 mt-auto text-xs text-gray-600"
+>
+  <div
+    class="mx-auto max-w-6xl flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+  >
+    <p class="leading-relaxed max-w-4xl">
+      {gameNames.join(", ")} &copy; Microsoft. Fan project under Microsoft's
+      <a
+        href="https://www.xbox.com/en-us/developers/rules"
+        target="_blank"
+        rel="noopener noreferrer"
+        class={linkClasses}
+      >
+        Game Content Usage Rules
+      </a>
+      &mdash; not endorsed by or affiliated with Microsoft.
+    </p>
+
+    <div
+      class="flex flex-wrap items-center gap-x-4 gap-y-1 shrink-0 md:justify-end"
+    >
+      <span>&copy; {currentYear} ForzaTunes</span>
+      <span aria-hidden="true" class="h-3 w-px bg-gray-800"></span>
+      <a href="/terms" class={linkClasses}>Terms</a>
+      <a href="/privacy" class={linkClasses}>Privacy</a>
+      <a
+        href="https://github.com/forzatunes/forzatunes"
+        target="_blank"
+        rel="noopener noreferrer"
+        class={linkClasses}
+      >
+        GitHub
+      </a>
+    </div>
+  </div>
+</footer>
