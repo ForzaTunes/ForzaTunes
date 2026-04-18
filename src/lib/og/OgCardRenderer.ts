@@ -6,8 +6,8 @@ import { OG_DIMENSIONS } from "./OgTheme";
 export class OgCardRenderer {
   private constructor(private readonly fonts: OgFont[]) {}
 
-  static async create(request: Request): Promise<OgCardRenderer> {
-    const fonts = await OgFontLoader.load(request);
+  static async create(): Promise<OgCardRenderer> {
+    const fonts = await OgFontLoader.load();
     return new OgCardRenderer(fonts);
   }
 

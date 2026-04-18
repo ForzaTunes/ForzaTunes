@@ -59,6 +59,21 @@ export class DatabaseSeeder {
           car.imageKey ?? null,
         ],
       );
+
+      await this.databaseClient.execute(
+        `UPDATE cars
+            SET image_url = ?, image_key = ?, category = ?
+          WHERE game_id = ? AND make = ? AND model = ? AND year = ?`,
+        [
+          car.imageUrl ?? null,
+          car.imageKey ?? null,
+          car.category,
+          game.id,
+          car.make,
+          car.model,
+          car.year,
+        ],
+      );
     }
   }
 

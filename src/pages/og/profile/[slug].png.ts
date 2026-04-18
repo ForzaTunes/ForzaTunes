@@ -16,7 +16,7 @@ function isValidSlug(raw: string | undefined): raw is string {
   return /^[A-Za-z0-9]{8,32}$/.test(raw);
 }
 
-export const GET: APIRoute = async ({ params, locals, request }) => {
+export const GET: APIRoute = async ({ params, locals }) => {
   const slug = params.slug;
   if (!isValidSlug(slug)) return OgCacheManager.notFound("invalid slug");
 
@@ -32,7 +32,7 @@ export const GET: APIRoute = async ({ params, locals, request }) => {
 
   const displayName = userRow.forza_gamertag ?? userRow.username;
 
-  const renderer = await OgCardRenderer.create(request);
+  const renderer = await OgCardRenderer.create();
   const response = renderer.render(
     ProfileOgCard({
       displayName,

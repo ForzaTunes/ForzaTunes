@@ -16,6 +16,8 @@ interface FontSpec {
 
 export class OgFontLoader {
   private static readonly FONT_FAMILY = "Exo 2";
+  private static readonly FONT_BASE = "https://images.forzatunes.com/fonts";
+  private static readonly FONT_CACHE_TTL_SECONDS = 60 * 60 * 24 * 30;
 
   private static readonly SPECS: readonly FontSpec[] = [
     { filename: "Exo2-Regular.woff", weight: 400, style: "normal" },
@@ -25,11 +27,11 @@ export class OgFontLoader {
 
   private static readonly cache: Map<string, ArrayBuffer> = new Map();
 
-  static async load(request: Request): Promise<OgFont[]> {
+  static async load(): Promise<OgFont[]> {
     const entries = await Promise.all(
       OgFontLoader.SPECS.map(async (spec) => ({
         spec,
-        data: await OgFontLoader.fetchFont(request, spec.filename),
+        data: await OgFontLoader.fetchFont(spec.filename),
       })),
     );
 
@@ -41,15 +43,17 @@ export class OgFontLoader {
     }));
   }
 
-  private static async fetchFont(
-    request: Request,
-    filename: string,
-  ): Promise<ArrayBuffer> {
+  private static async fetchFont(filename: string): Promise<ArrayBuffer> {
     const cached = OgFontLoader.cache.get(filename);
     if (cached) return cached;
 
-    const fontUrl = new URL(`/fonts/${filename}`, request.url);
-    const response = await fetch(fontUrl.toString());
+    const response = await fetch(`${OgFontLoader.FONT_BASE}/${filename}`, {
+      cf: {
+        cacheEverything: true,
+        cacheTtl: OgFontLoader.FONT_CACHE_TTL_SECONDS,
+      },
+    } as RequestInit);
+
     if (!response.ok) {
       throw new Error(
         `Failed to load OG font ${filename}: ${response.status} ${response.statusText}`,

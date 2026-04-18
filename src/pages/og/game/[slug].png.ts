@@ -9,7 +9,7 @@ const TAGLINES: Record<string, string> = {
   fh6: "Tunes by the Forza Horizon 6 community.",
 };
 
-export const GET: APIRoute = async ({ params, locals, request }) => {
+export const GET: APIRoute = async ({ params, locals }) => {
   const gameSlug = params.slug;
   if (!gameSlug) return OgCacheManager.notFound("missing slug");
 
@@ -22,7 +22,7 @@ export const GET: APIRoute = async ({ params, locals, request }) => {
     cars.getByGame(game.id),
   ]);
 
-  const renderer = await OgCardRenderer.create(request);
+  const renderer = await OgCardRenderer.create();
   const response = renderer.render(
     GameOgCard({
       gameName: game.name,

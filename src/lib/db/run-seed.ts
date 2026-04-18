@@ -35,7 +35,7 @@ const statements: string[] = [];
 
 for (const game of games) {
   statements.push(
-    `INSERT OR REPLACE INTO games (name, slug, share_code_length) VALUES ('${escapeSql(game.name)}', '${escapeSql(game.slug)}', ${game.shareCodeLength});`,
+    `INSERT INTO games (name, slug, share_code_length) VALUES ('${escapeSql(game.name)}', '${escapeSql(game.slug)}', ${game.shareCodeLength}) ON CONFLICT(slug) DO UPDATE SET name = excluded.name, share_code_length = excluded.share_code_length;`,
   );
 }
 
@@ -49,8 +49,15 @@ for (const game of games) {
     const category = car.category ? `'${escapeSql(car.category)}'` : "NULL";
     const imageUrl = car.imageUrl ? `'${escapeSql(car.imageUrl)}'` : "NULL";
     const imageKey = car.imageKey ? `'${escapeSql(car.imageKey)}'` : "NULL";
+    const gameSelect = `(SELECT id FROM games WHERE slug = '${escapeSql(game.slug)}')`;
+    const make = `'${escapeSql(car.make)}'`;
+    const model = `'${escapeSql(car.model)}'`;
+
     statements.push(
-      `INSERT OR IGNORE INTO cars (game_id, make, model, year, category, image_url, image_key) VALUES ((SELECT id FROM games WHERE slug = '${escapeSql(game.slug)}'), '${escapeSql(car.make)}', '${escapeSql(car.model)}', ${car.year}, ${category}, ${imageUrl}, ${imageKey});`,
+      `INSERT OR IGNORE INTO cars (game_id, make, model, year, category, image_url, image_key) VALUES (${gameSelect}, ${make}, ${model}, ${car.year}, ${category}, ${imageUrl}, ${imageKey});`,
+    );
+    statements.push(
+      `UPDATE cars SET image_url = ${imageUrl}, image_key = ${imageKey}, category = ${category} WHERE game_id = ${gameSelect} AND make = ${make} AND model = ${model} AND year = ${car.year};`,
     );
   }
 

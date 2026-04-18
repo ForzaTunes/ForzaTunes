@@ -10,7 +10,7 @@ function parseId(raw: string | undefined): number | null {
   return id;
 }
 
-export const GET: APIRoute = async ({ params, locals, request }) => {
+export const GET: APIRoute = async ({ params, locals }) => {
   const tuneId = parseId(params.id);
   const gameSlug = params.game;
   if (tuneId === null || !gameSlug) {
@@ -32,7 +32,7 @@ export const GET: APIRoute = async ({ params, locals, request }) => {
     config?.tuneTypes.find((t) => t.value === tune.tuneType)?.label ??
     tune.tuneType;
 
-  const renderer = await OgCardRenderer.create(request);
+  const renderer = await OgCardRenderer.create();
   const response = renderer.render(
     TuneOgCard({
       tune,
