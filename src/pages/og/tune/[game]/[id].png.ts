@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { OgCardRenderer } from "../../../../lib/og/OgCardRenderer";
 import { OgCacheManager } from "../../../../lib/og/OgCacheManager";
+import { OgImageLoader } from "../../../../lib/og/OgImageLoader";
 import { TuneOgCard } from "../../../../lib/og/cards/TuneOgCard";
 
 function parseId(raw: string | undefined): number | null {
@@ -32,13 +33,21 @@ export const GET: APIRoute = async ({ params, locals }) => {
     config?.tuneTypes.find((t) => t.value === tune.tuneType)?.label ??
     tune.tuneType;
 
-  const renderer = await OgCardRenderer.create();
+  const [renderer, carImageDataUrl] = await Promise.all([
+    OgCardRenderer.create(),
+    OgImageLoader.loadCarDataUrl({
+      imageKey: tune.carImageKey,
+      imageUrl: tune.carImageUrl,
+    }),
+  ]);
+
   const response = renderer.render(
     TuneOgCard({
       tune,
       gameName: game.name,
       gameSlug,
       tuneTypeLabel,
+      carImageDataUrl,
     }),
   );
 

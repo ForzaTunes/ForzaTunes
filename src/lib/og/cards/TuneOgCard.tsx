@@ -1,6 +1,5 @@
 import type { ReactElement } from "react";
 import type { TuneWithDetails } from "../../models";
-import { CarImageUrlResolver } from "../../utils/carImage";
 import { OgTheme } from "../OgTheme";
 import { OgCarBackdrop } from "./OgCarBackdrop";
 import { OgCardFrame } from "./OgCardFrame";
@@ -15,6 +14,7 @@ interface Props {
   gameName: string;
   gameSlug: string;
   tuneTypeLabel: string;
+  carImageDataUrl: string | null;
 }
 
 const PADDING = 56;
@@ -26,18 +26,13 @@ export function TuneOgCard({
   gameName,
   gameSlug,
   tuneTypeLabel,
+  carImageDataUrl,
 }: Props): ReactElement {
-  const carImage = CarImageUrlResolver.forCarOrPlaceholder(
-    { imageKey: tune.carImageKey, imageUrl: tune.carImageUrl },
-    "og",
-  );
-  const absoluteCarImage = carImage.startsWith("http")
-    ? carImage
-    : `https://forzatunes.com${carImage}`;
-
   return (
     <OgCardFrame>
-      <OgCarBackdrop imageUrl={absoluteCarImage} width={CAR_WIDTH} />
+      {carImageDataUrl ? (
+        <OgCarBackdrop imageUrl={carImageDataUrl} width={CAR_WIDTH} />
+      ) : null}
       <Foreground
         tune={tune}
         gameName={gameName}
