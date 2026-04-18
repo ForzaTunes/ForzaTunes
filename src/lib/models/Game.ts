@@ -28,6 +28,11 @@ export interface GameConfig {
   shortName?: string;
   shareCodeLength: number;
   releaseDate?: string;
+  /**
+   * UTC instant the playable gate opens. Set this to the advertised Early
+   * Access calendar date at `T00:00:00Z` so formatting in UTC renders that
+   * date directly (no separate display field needed).
+   */
   playableFromUtc?: string;
   trackFieldLabel?: string;
   trackFieldHint?: string;

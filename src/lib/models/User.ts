@@ -1,5 +1,6 @@
 export interface User {
   id: number;
+  publicSlug: string;
   username: string;
   avatarUrl: string | null;
   forzaGamertag: string | null;
@@ -10,6 +11,7 @@ export interface User {
 
 export interface UserProfile {
   id: number;
+  publicSlug: string;
   username: string;
   avatarUrl: string | null;
   forzaGamertag: string | null;

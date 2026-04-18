@@ -133,6 +133,7 @@ export class StarManager implements IStarManager {
          c.category AS car_category, c.image_url AS car_image_url,
          c.image_key AS car_image_key,
          u.username AS creator_username,
+         u.public_slug AS creator_public_slug,
          COALESCE(sc.star_count, 0) AS star_count
        FROM stars s
        JOIN tunes t ON t.id = s.tune_id

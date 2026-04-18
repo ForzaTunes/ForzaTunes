@@ -26,7 +26,7 @@ interface Props {
   drivetrain?: string | null;
   starCount: number;
   creatorGamertag: string;
-  creatorUserId: number;
+  creatorPublicSlug: string;
   isStarred: boolean;
   isLoggedIn: boolean;
   ownerActions?: boolean;
@@ -35,7 +35,7 @@ interface Props {
 const {
   id, gameSlug, title, shareCode, carMake, carModel, carYear,
   carClass, carImageUrl, carImageKey, tuneType, tuneTypeLabel, piRating, drivetrain,
-  starCount, creatorGamertag, creatorUserId, isStarred, isLoggedIn,
+  starCount, creatorGamertag, creatorPublicSlug, isStarred, isLoggedIn,
   ownerActions = false,
 } = Astro.props;
 
@@ -101,7 +101,7 @@ const resolvedCarImage = CarImageUrlResolver.forCar(
   <div class="relative flex items-center gap-3 border-t border-gray-800 bg-gray-950/60 px-4 py-2">
     <ShareCodeDisplay code={shareCode} size="sm" />
     <a
-      href={`/u/${creatorUserId}`}
+      href={`/u/${creatorPublicSlug}`}
       class="flex-1 min-w-0 truncate text-xs text-gray-400 hover:text-accent-300 transition-colors"
     >
       by {creatorGamertag}

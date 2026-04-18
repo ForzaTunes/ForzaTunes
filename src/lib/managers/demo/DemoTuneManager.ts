@@ -195,6 +195,7 @@ export class DemoTuneManager implements ITuneManager {
       carImageUrl: car?.imageUrl ?? null,
       carImageKey: car?.imageKey ?? null,
       creatorUsername: creator?.username ?? tune.creatorGamertag,
+      creatorPublicSlug: creator?.public_slug ?? "",
       starCount,
     };
   }

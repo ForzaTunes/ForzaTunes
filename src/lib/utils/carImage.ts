@@ -1,4 +1,4 @@
-export type CarImageVariant = "card" | "tile" | "hero" | "public";
+export type CarImageVariant = "card" | "tile" | "hero" | "og" | "public";
 
 export interface CarImageSource {
   imageKey?: string | null;
@@ -17,6 +17,7 @@ export class CarImageUrlResolver {
     card: "width=600,height=400,fit=cover,format=auto,quality=85",
     tile: "width=400,height=300,fit=cover,format=auto,quality=85",
     hero: "width=1200,height=800,fit=cover,format=auto,quality=85",
+    og: "width=720,height=720,fit=cover,format=png,quality=90",
     public: "width=1600,format=auto,quality=90",
   };
 

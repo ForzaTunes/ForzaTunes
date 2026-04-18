@@ -4,9 +4,41 @@ import ProfileView from "../../../components/profile/ProfileView.astro";
 import { ProfileDataLoader } from "../../../lib/profile/ProfileDataLoader";
 import type { TuneSortField } from "../../../lib/models";
 
-const rawId = Astro.params.id;
-const profileUserId = Number(rawId);
-if (!Number.isFinite(profileUserId) || profileUserId <= 0) {
+const raw = Astro.params.slug;
+if (!raw) {
+  return new Response(null, { status: 404 });
+}
+
+const users = Astro.locals.managers.users;
+
+// Gamertag alias: `/u/@Somebody` → 301 to canonical slug. Requires a single
+// unambiguous gamertag match so enumeration via aliases is useless.
+if (raw.startsWith("@")) {
+  const alias = raw.slice(1);
+  if (alias.length === 0) {
+    return new Response(null, { status: 404 });
+  }
+  const match = await users.findByGamertag(alias);
+  if (!match) {
+    return new Response(null, { status: 404 });
+  }
+  return Astro.redirect(`/u/${match.public_slug}`, 301);
+}
+
+// Pure-numeric slugs (old `/u/1`-style enumeration) are rejected early so
+// that nothing on this surface hints at user counts.
+if (/^\d+$/.test(raw)) {
+  return new Response(null, { status: 404 });
+}
+
+// Opaque slug shape: base62, length 8–32. Keeps the validator forgiving of
+// future length tweaks while still rejecting garbage.
+if (!/^[A-Za-z0-9]{8,32}$/.test(raw)) {
+  return new Response(null, { status: 404 });
+}
+
+const profileRow = await users.findByPublicSlug(raw);
+if (!profileRow) {
   return new Response(null, { status: 404 });
 }
 
@@ -32,7 +64,7 @@ const activeSort: TuneSortField =
 
 const loader = new ProfileDataLoader(Astro.locals.managers);
 const data = await loader.load({
-  profileUserId,
+  profileUserId: profileRow.id,
   viewerId: viewer?.id ?? null,
   activeTab,
   page,
@@ -47,7 +79,7 @@ if (!data.profileUser) {
 
 const isOwner = viewer?.id === data.profileUser.id;
 const displayName = data.profileUser.forzaGamertag ?? data.profileUser.username;
-const baseUrl = `/u/${data.profileUser.id}`;
+const baseUrl = `/u/${data.profileUser.publicSlug}`;
 
 const activeGameSlug =
   gameSlug && data.availableGames.some((g) => g.slug === gameSlug)
@@ -58,6 +90,7 @@ const activeGameSlug =
 <PageShell
   title={`${displayName} — ForzaTunes`}
   description={`Tunes shared by ${displayName} on ForzaTunes.`}
+  ogImage={`/og/profile/${data.profileUser.publicSlug}.png`}
 >
   <ProfileView
     profileUser={data.profileUser}

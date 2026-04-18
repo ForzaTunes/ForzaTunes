@@ -1,5 +1,6 @@
 export interface UserRow {
   id: number;
+  public_slug: string;
   username: string;
   avatar_url: string | null;
   forza_gamertag: string | null;
@@ -18,6 +19,14 @@ import type { UserProfile } from "../../models";
 
 export interface IUserManager {
   findById(id: number): Promise<UserRow | null>;
+  findByPublicSlug(slug: string): Promise<UserRow | null>;
+  /**
+   * Case-insensitive lookup by `forza_gamertag`. Returns the matching row
+   * only when exactly one user claims the gamertag; returns `null` on zero
+   * or multiple matches so ambiguous aliases cannot resolve to a single
+   * profile.
+   */
+  findByGamertag(gamertag: string): Promise<UserRow | null>;
   getProfile(id: number): Promise<UserProfile | null>;
   getBanStatus(userId: number): Promise<BanStatus>;
   findByProvider(

@@ -33,6 +33,7 @@ SELECT
   c.category AS car_category, c.image_url AS car_image_url,
   c.image_key AS car_image_key,
   u.username AS creator_username,
+  u.public_slug AS creator_public_slug,
   COALESCE(sc.star_count, 0) AS star_count
 FROM tunes t
 JOIN cars c ON c.id = t.car_id

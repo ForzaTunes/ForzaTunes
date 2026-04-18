@@ -88,6 +88,7 @@ Astro.response.headers.set(
   description={`${tuneTypeLabel} tune for ${tune.carYear} ${tune.carMake} ${tune.carModel} in ${game.name}. Share code: ${tune.shareCode}`}
   currentGameSlug={gameSlug}
   canonicalUrl={`/${gameSlug}/tunes/${tune.id}`}
+  ogImage={`/og/tune/${gameSlug}/${tune.id}.png`}
   structuredData={structuredData}
 >
   <div class="max-w-6xl mx-auto pt-4 pb-8 px-4">

@@ -27,6 +27,7 @@ export interface TuneWithDetails extends Tune {
   carImageKey: string | null;
   starCount: number;
   creatorUsername: string;
+  creatorPublicSlug: string;
 }
 
 export interface TuneSearchFilters {

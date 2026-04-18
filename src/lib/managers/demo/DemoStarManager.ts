@@ -90,6 +90,7 @@ export class DemoStarManager implements IStarManager {
           carImageUrl: car?.imageUrl ?? null,
           carImageKey: car?.imageKey ?? null,
           creatorUsername: creator?.username ?? tune.creatorGamertag,
+          creatorPublicSlug: creator?.public_slug ?? "",
           starCount: this.store.stars.filter((s) => s.tuneId === tune.id)
             .length,
         },

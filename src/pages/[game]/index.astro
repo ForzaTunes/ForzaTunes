@@ -24,6 +24,7 @@ Astro.response.headers.set(
   description={`The ${data.game.name} community hub on ForzaTunes. Browse, share, and star community tunes.`}
   currentGameSlug={gameSlug}
   canonicalUrl={`/${gameSlug}/`}
+  ogImage={`/og/game/${gameSlug}.png`}
 >
   <GameHomeView
     data={data}

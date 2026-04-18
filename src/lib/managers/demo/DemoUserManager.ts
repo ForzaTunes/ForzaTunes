@@ -1,4 +1,5 @@
 import type { UserProfile } from "../../models";
+import { PublicSlugGenerator } from "../../users/PublicSlugGenerator";
 import type { BanStatus, IUserManager, UserRow } from "../interfaces";
 import { mapRowToUserProfile } from "../userMappers";
 import { DemoStore } from "./DemoStore";
@@ -8,6 +9,18 @@ export class DemoUserManager implements IUserManager {
 
   async findById(id: number): Promise<UserRow | null> {
     return this.store.users.find((u) => u.id === id) ?? null;
+  }
+
+  async findByPublicSlug(slug: string): Promise<UserRow | null> {
+    return this.store.users.find((u) => u.public_slug === slug) ?? null;
+  }
+
+  async findByGamertag(gamertag: string): Promise<UserRow | null> {
+    const needle = gamertag.toLowerCase();
+    const matches = this.store.users.filter(
+      (u) => u.forza_gamertag?.toLowerCase() === needle,
+    );
+    return matches.length === 1 ? (matches[0] ?? null) : null;
   }
 
   async getProfile(id: number): Promise<UserProfile | null> {
@@ -37,6 +50,7 @@ export class DemoUserManager implements IUserManager {
   ): Promise<UserRow> {
     const user: UserRow = {
       id: nextUserId(this.store),
+      public_slug: PublicSlugGenerator.generate(),
       username,
       avatar_url: avatarUrl,
       forza_gamertag: null,

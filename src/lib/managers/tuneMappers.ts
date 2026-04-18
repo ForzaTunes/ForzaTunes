@@ -23,6 +23,7 @@ export interface TuneWithDetailsRow {
   car_image_url: string | null;
   car_image_key: string | null;
   creator_username: string;
+  creator_public_slug: string;
   star_count: number;
 }
 
@@ -96,5 +97,6 @@ export function mapRowToTuneWithDetails(
     carImageKey: row.car_image_key,
     starCount: row.star_count,
     creatorUsername: row.creator_username,
+    creatorPublicSlug: row.creator_public_slug,
   };
 }

@@ -4,6 +4,7 @@ import type { UserRow } from "./interfaces";
 export function mapRowToUserProfile(row: UserRow): UserProfile {
   return {
     id: row.id,
+    publicSlug: row.public_slug,
     username: row.username,
     avatarUrl: row.avatar_url,
     forzaGamertag: row.forza_gamertag,

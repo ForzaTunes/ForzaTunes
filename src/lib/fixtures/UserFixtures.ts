@@ -25,9 +25,18 @@ const SPECS: FixtureUserSpec[] = [
   { username: "TractionTara", gamertag: "TractionTara" },
 ];
 
+/**
+ * Builds a stable base62-ish slug from a fixture index. Deterministic so
+ * local dev and demo URLs stay bookmarkable across reloads.
+ */
+function demoSlug(index: number): string {
+  return `demo${String(index).padStart(6, "0")}`;
+}
+
 function buildUsers(): UserRow[] {
   return SPECS.map((spec, index) => ({
     id: 1001 + index,
+    public_slug: demoSlug(1001 + index),
     username: spec.username,
     avatar_url: null,
     forza_gamertag: spec.gamertag,
@@ -41,6 +50,7 @@ export const DEMO_USERS: UserRow[] = buildUsers();
 
 export const DEMO_VIEWER_USER: UserRow = {
   id: 1,
+  public_slug: demoSlug(1),
   username: "DemoViewer",
   avatar_url: null,
   forza_gamertag: "DemoViewer",
