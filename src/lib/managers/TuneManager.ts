@@ -1,4 +1,6 @@
 import type { DatabaseClient } from "../db/DatabaseClient";
+import type { ICacheVersionManager } from "../middleware/CacheVersionManager";
+import { NullCacheVersionManager } from "../middleware/NullCacheVersionManager";
 import type {
   TuneWithDetails,
   TuneSearchFilters,
@@ -54,7 +56,10 @@ function escapeLike(value: string): string {
 }
 
 export class TuneManager implements ITuneManager {
-  constructor(private db: DatabaseClient) {}
+  constructor(
+    private db: DatabaseClient,
+    private cacheVersions: ICacheVersionManager = new NullCacheVersionManager(),
+  ) {}
 
   async search(
     gameId: number,
@@ -272,6 +277,7 @@ export class TuneManager implements ITuneManager {
       throw new Error("Failed to retrieve created tune");
     }
 
+    await this.cacheVersions.bump();
     return mapRowToTune(row).id;
   }
 
@@ -305,7 +311,9 @@ export class TuneManager implements ITuneManager {
         userId,
       ],
     );
-    return (result.meta?.changes ?? 0) > 0;
+    const changed = (result.meta?.changes ?? 0) > 0;
+    if (changed) await this.cacheVersions.bump();
+    return changed;
   }
 
   async delete(id: number, userId: number): Promise<boolean> {
@@ -313,6 +321,8 @@ export class TuneManager implements ITuneManager {
       `DELETE FROM tunes WHERE id = ? AND user_id = ?`,
       [id, userId],
     );
-    return (result.meta?.changes ?? 0) > 0;
+    const changed = (result.meta?.changes ?? 0) > 0;
+    if (changed) await this.cacheVersions.bump();
+    return changed;
   }
 }

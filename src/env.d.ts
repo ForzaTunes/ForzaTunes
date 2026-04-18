@@ -6,6 +6,7 @@ declare global {
   namespace Cloudflare {
     interface Env {
       DB: D1Database;
+      SESSION: KVNamespace;
       DISCORD_CLIENT_ID: string;
       DISCORD_CLIENT_SECRET: string;
       SESSION_SECRET: string;

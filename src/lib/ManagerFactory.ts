@@ -6,6 +6,9 @@ import { StarManager } from "./managers/StarManager";
 import { TuneManager } from "./managers/TuneManager";
 import { UserManager } from "./managers/UserManager";
 import { createDemoManagers } from "./managers/demo/createDemoManagers";
+import { CacheVersionManager } from "./middleware/CacheVersionManager";
+import type { ICacheVersionManager } from "./middleware/CacheVersionManager";
+import { NullCacheVersionManager } from "./middleware/NullCacheVersionManager";
 import type {
   ICarManager,
   IGameManager,
@@ -22,6 +25,7 @@ export interface Managers {
   stars: IStarManager;
   users: IUserManager;
   reports: IReportManager;
+  cacheVersions: ICacheVersionManager;
 }
 
 export function createManagers(cfEnv: Cloudflare.Env): Managers {
@@ -33,12 +37,16 @@ export function createManagers(cfEnv: Cloudflare.Env): Managers {
 
 function createD1Managers(cfEnv: Cloudflare.Env): Managers {
   const db = new DatabaseClient(cfEnv.DB);
+  const cacheVersions = cfEnv.SESSION
+    ? new CacheVersionManager(cfEnv.SESSION)
+    : new NullCacheVersionManager();
   return {
     games: new GameManager(db),
     cars: new CarManager(db),
-    tunes: new TuneManager(db),
-    stars: new StarManager(db),
+    tunes: new TuneManager(db, cacheVersions),
+    stars: new StarManager(db, cacheVersions),
     users: new UserManager(db),
     reports: new ReportManager(db),
+    cacheVersions,
   };
 }

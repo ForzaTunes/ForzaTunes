@@ -1,4 +1,5 @@
 import type { Managers } from "../../ManagerFactory";
+import { NullCacheVersionManager } from "../../middleware/NullCacheVersionManager";
 import { DemoCarManager } from "./DemoCarManager";
 import { DemoGameManager } from "./DemoGameManager";
 import { DemoReportManager } from "./DemoReportManager";
@@ -16,5 +17,6 @@ export function createDemoManagers(): Managers {
     stars: new DemoStarManager(store),
     users: new DemoUserManager(store),
     reports: new DemoReportManager(store),
+    cacheVersions: new NullCacheVersionManager(),
   };
 }

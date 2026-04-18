@@ -1,4 +1,6 @@
 import type { DatabaseClient } from "../db/DatabaseClient";
+import type { ICacheVersionManager } from "../middleware/CacheVersionManager";
+import { NullCacheVersionManager } from "../middleware/NullCacheVersionManager";
 import type { TuneSortField, TuneWithDetails } from "../models";
 import type { IStarManager, StarredTunesQuery } from "./interfaces";
 import {
@@ -17,13 +19,17 @@ const STARRED_SORT_MAP: Record<TuneSortField, string> = {
 const DEFAULT_STARRED_SORT: TuneSortField = "newest";
 
 export class StarManager implements IStarManager {
-  constructor(private db: DatabaseClient) {}
+  constructor(
+    private db: DatabaseClient,
+    private cacheVersions: ICacheVersionManager = new NullCacheVersionManager(),
+  ) {}
 
   async star(userId: number, tuneId: number): Promise<void> {
     await this.db.execute(
       `INSERT OR IGNORE INTO stars (user_id, tune_id) VALUES (?, ?)`,
       [userId, tuneId],
     );
+    await this.cacheVersions.bump();
   }
 
   async unstar(userId: number, tuneId: number): Promise<void> {
@@ -31,6 +37,7 @@ export class StarManager implements IStarManager {
       `DELETE FROM stars WHERE user_id = ? AND tune_id = ?`,
       [userId, tuneId],
     );
+    await this.cacheVersions.bump();
   }
 
   async toggleStar(userId: number, tuneId: number): Promise<boolean> {
@@ -44,6 +51,7 @@ export class StarManager implements IStarManager {
         `DELETE FROM stars WHERE user_id = ? AND tune_id = ?`,
         [userId, tuneId],
       );
+      await this.cacheVersions.bump();
       return false;
     }
 
@@ -51,6 +59,7 @@ export class StarManager implements IStarManager {
       `INSERT OR IGNORE INTO stars (user_id, tune_id) VALUES (?, ?)`,
       [userId, tuneId],
     );
+    await this.cacheVersions.bump();
     return true;
   }
 
