@@ -193,6 +193,7 @@ export class DemoTuneManager implements ITuneManager {
       carYear: car?.year ?? 0,
       carCategory: car?.category ?? null,
       carImageUrl: car?.imageUrl ?? null,
+      carImageKey: car?.imageKey ?? null,
       creatorUsername: creator?.username ?? tune.creatorGamertag,
       starCount,
     };

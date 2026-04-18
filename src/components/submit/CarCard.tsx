@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CarOption } from "./CarPicker";
+import { CarImageUrlResolver } from "../../lib/utils/carImage";
 
 interface CarCardProps {
   carsByMake: Record<string, CarOption[]>;
@@ -54,13 +55,14 @@ function SelectedCarCard({
   onChange: () => void;
 }) {
   const [imageFailed, setImageFailed] = useState(false);
-  const showImage = car.imageUrl && !imageFailed;
+  const resolvedUrl = CarImageUrlResolver.forCar(car, "hero");
+  const showImage = resolvedUrl && !imageFailed;
 
   return (
     <div className="relative overflow-hidden bg-gray-900 border border-gray-700 aspect-[4/3]">
       {showImage ? (
         <img
-          src={car.imageUrl ?? undefined}
+          src={resolvedUrl}
           alt={`${car.year} ${car.make} ${car.model}`}
           onError={() => setImageFailed(true)}
           className="absolute inset-0 w-full h-full object-cover"

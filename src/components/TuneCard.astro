@@ -4,6 +4,10 @@ import InGameClassPill from "./submit/InGameClassPill";
 import StarButton from "./tune/StarButton";
 import TuneCardOwnerMenu from "./profile/TuneCardOwnerMenu";
 import { formatCarSubtitle } from "../lib/utils/formatCarSubtitle";
+import {
+  CAR_IMAGE_ONERROR,
+  CarImageUrlResolver,
+} from "../lib/utils/carImage";
 
 interface Props {
   id: number;
@@ -15,6 +19,7 @@ interface Props {
   carYear: number;
   carClass: string;
   carImageUrl?: string | null;
+  carImageKey?: string | null;
   tuneType: string;
   tuneTypeLabel?: string;
   piRating: number;
@@ -29,12 +34,17 @@ interface Props {
 
 const {
   id, gameSlug, title, shareCode, carMake, carModel, carYear,
-  carClass, carImageUrl, tuneType, tuneTypeLabel, piRating, drivetrain,
+  carClass, carImageUrl, carImageKey, tuneType, tuneTypeLabel, piRating, drivetrain,
   starCount, creatorGamertag, creatorUserId, isStarred, isLoggedIn,
   ownerActions = false,
 } = Astro.props;
 
 const displayTuneType = tuneTypeLabel ?? tuneType;
+
+const resolvedCarImage = CarImageUrlResolver.forCar(
+  { imageKey: carImageKey, imageUrl: carImageUrl },
+  "card",
+);
 ---
 
 <div class={`theme-${gameSlug} group relative h-full flex flex-col overflow-hidden border border-gray-700 bg-gray-900 hover:border-accent-500 transition-colors`}>
@@ -42,12 +52,13 @@ const displayTuneType = tuneTypeLabel ?? tuneType;
     href={`/${gameSlug}/tunes/${id}`}
     class="relative flex flex-1 flex-col p-4 overflow-hidden focus-visible:ring-2 focus-visible:ring-accent-400 focus-visible:outline-none"
   >
-    {carImageUrl ? (
+    {resolvedCarImage ? (
       <img
-        src={carImageUrl}
+        src={resolvedCarImage}
         alt=""
         aria-hidden="true"
         loading="lazy"
+        onerror={CAR_IMAGE_ONERROR}
         class="fz-edge-fade pointer-events-none absolute inset-y-0 right-0 h-full w-2/3 object-cover object-right opacity-50 select-none [transform:scale(-1.1,1.1)]"
       />
       <div

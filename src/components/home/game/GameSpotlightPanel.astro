@@ -2,6 +2,10 @@
 import InGameClassPill from "../../submit/InGameClassPill";
 import ShareCodeDisplay from "../../ShareCodeDisplay.astro";
 import { formatCarSubtitle } from "../../../lib/utils/formatCarSubtitle";
+import {
+  CAR_IMAGE_ONERROR,
+  CarImageUrlResolver,
+} from "../../../lib/utils/carImage";
 import type { TuneWithDetails } from "../../../lib/models";
 
 interface Props {
@@ -13,6 +17,13 @@ interface Props {
 const { gameSlug, tune, source } = Astro.props;
 
 const label = source === "trending" ? "Top This Week" : "All-Time Favourite";
+
+const resolvedCarImage = tune
+  ? CarImageUrlResolver.forCar(
+      { imageKey: tune.carImageKey, imageUrl: tune.carImageUrl },
+      "hero",
+    )
+  : null;
 ---
 
 <section
@@ -44,11 +55,12 @@ const label = source === "trending" ? "Top This Week" : "All-Time Favourite";
         </span>
       </div>
 
-      {tune.carImageUrl ? (
+      {resolvedCarImage ? (
         <img
-          src={tune.carImageUrl}
+          src={resolvedCarImage}
           alt=""
           aria-hidden="true"
+          onerror={CAR_IMAGE_ONERROR}
           class="fz-edge-fade pointer-events-none absolute inset-y-0 right-0 h-full w-3/4 object-cover object-right -scale-x-100 select-none"
         />
       ) : (

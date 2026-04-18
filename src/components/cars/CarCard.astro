@@ -1,5 +1,9 @@
 ---
 import type { Car } from "../../lib/models";
+import {
+  CAR_IMAGE_ONERROR,
+  CarImageUrlResolver,
+} from "../../lib/utils/carImage";
 
 interface Props {
   car: Car;
@@ -11,6 +15,8 @@ const { car, gameSlug } = Astro.props;
 const tunesHref = `/${gameSlug}/tunes?car=${car.id}`;
 const searchHaystack = `${car.make} ${car.model} ${car.year}`.toLowerCase();
 const initial = (car.make[0] ?? "?").toUpperCase();
+
+const resolvedCarImage = CarImageUrlResolver.forCar(car, "tile");
 ---
 
 <a
@@ -22,12 +28,13 @@ const initial = (car.make[0] ?? "?").toUpperCase();
   aria-label={`View tunes for ${car.year} ${car.make} ${car.model}`}
 >
   <div class="relative aspect-[16/10] bg-gray-950 overflow-hidden">
-    {car.imageUrl ? (
+    {resolvedCarImage ? (
       <img
-        src={car.imageUrl}
+        src={resolvedCarImage}
         alt=""
         aria-hidden="true"
         loading="lazy"
+        onerror={CAR_IMAGE_ONERROR}
         class="absolute inset-0 w-full h-full object-cover select-none"
       />
     ) : (

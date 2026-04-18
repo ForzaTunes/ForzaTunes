@@ -9,6 +9,7 @@ interface RawCar {
   year: number;
   category: string | null;
   imageUrl?: string | null;
+  imageKey?: string | null;
 }
 
 interface GameCars {
@@ -36,6 +37,7 @@ function buildCars(): Car[] {
         year: raw.year,
         category: raw.category ?? null,
         imageUrl: raw.imageUrl ?? null,
+        imageKey: raw.imageKey ?? null,
       });
     });
   }

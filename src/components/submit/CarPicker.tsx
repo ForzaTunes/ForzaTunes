@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { CarImageUrlResolver } from "../../lib/utils/carImage";
 
 export interface CarOption {
   id: number;
@@ -7,6 +8,7 @@ export interface CarOption {
   year: number;
   category?: string | null;
   imageUrl?: string | null;
+  imageKey?: string | null;
 }
 
 interface CarPickerProps {
@@ -246,8 +248,9 @@ export default function CarPicker({
 
 function CarThumbnail({ car }: { car: CarOption }) {
   const [failed, setFailed] = useState(false);
+  const resolved = CarImageUrlResolver.forCar(car, "tile");
 
-  if (!car.imageUrl || failed) {
+  if (!resolved || failed) {
     return (
       <div className="w-8 h-8 rounded-sm bg-gray-800 flex items-center justify-center text-xs font-medium text-gray-500 shrink-0">
         {car.make.charAt(0)}
@@ -257,7 +260,7 @@ function CarThumbnail({ car }: { car: CarOption }) {
 
   return (
     <img
-      src={car.imageUrl}
+      src={resolved}
       alt=""
       loading="lazy"
       onError={() => setFailed(true)}

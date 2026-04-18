@@ -3,6 +3,10 @@ import InGameClassPill from "../submit/InGameClassPill";
 import TuneMetaChips from "./TuneMetaChips.astro";
 import ReportButton from "./ReportButton";
 import { formatCarSubtitle } from "../../lib/utils/formatCarSubtitle";
+import {
+  CAR_IMAGE_ONERROR,
+  CarImageUrlResolver,
+} from "../../lib/utils/carImage";
 
 interface Props {
   tuneId: number;
@@ -12,6 +16,7 @@ interface Props {
   carYear: number;
   carClass: string;
   carImageUrl?: string | null;
+  carImageKey?: string | null;
   piRating: number;
   creatorGamertag: string;
   tuneTypeLabel: string;
@@ -31,6 +36,7 @@ const {
   carYear,
   carClass,
   carImageUrl,
+  carImageKey,
   piRating,
   creatorGamertag,
   tuneTypeLabel,
@@ -43,15 +49,21 @@ const {
 } = Astro.props;
 
 const canReport = isLoggedIn && !isOwner;
+
+const resolvedCarImage = CarImageUrlResolver.forCar(
+  { imageKey: carImageKey, imageUrl: carImageUrl },
+  "hero",
+);
 ---
 
 <section class="relative overflow-hidden border border-gray-700 bg-gray-900">
-  {carImageUrl ? (
+  {resolvedCarImage ? (
     <img
-      src={carImageUrl}
+      src={resolvedCarImage}
       alt=""
       aria-hidden="true"
       loading="eager"
+      onerror={CAR_IMAGE_ONERROR}
       class="fz-edge-fade pointer-events-none absolute inset-y-0 left-[15%] w-[70%] h-full object-cover object-[center_75%] -scale-x-100 select-none"
     />
     <div

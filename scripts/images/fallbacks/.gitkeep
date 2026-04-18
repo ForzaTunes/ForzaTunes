@@ -1,0 +1,3 @@
+# Drop manually-sourced car images here when Wikia fetches fail.
+# Filename must match the carId used by the migrator, e.g. `fh5-0042.png`.
+# The CarImageMigrator logs the expected fallbackId for each failure.

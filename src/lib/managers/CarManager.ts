@@ -12,6 +12,7 @@ interface CarRow {
   year: number;
   category: string | null;
   image_url: string | null;
+  image_key: string | null;
 }
 
 function mapRowToCar(row: CarRow): Car {
@@ -23,6 +24,7 @@ function mapRowToCar(row: CarRow): Car {
     year: row.year,
     category: row.category,
     imageUrl: row.image_url,
+    imageKey: row.image_key,
   };
 }
 
@@ -31,7 +33,7 @@ export class CarManager implements ICarManager {
 
   async getByGame(gameId: number, filters?: CarFilters): Promise<Car[]> {
     const rows = await this.db.query<CarRow>(
-      `SELECT id, game_id, make, model, year, category, image_url
+      `SELECT id, game_id, make, model, year, category, image_url, image_key
        FROM cars
        WHERE game_id = ?1
          AND (?2 IS NULL OR make = ?2)
@@ -44,7 +46,7 @@ export class CarManager implements ICarManager {
 
   async getById(id: number): Promise<Car | null> {
     const row = await this.db.queryOne<CarRow>(
-      "SELECT id, game_id, make, model, year, category, image_url FROM cars WHERE id = ?1",
+      "SELECT id, game_id, make, model, year, category, image_url, image_key FROM cars WHERE id = ?1",
       [id],
     );
     return row ? mapRowToCar(row) : null;

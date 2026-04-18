@@ -11,6 +11,8 @@ interface CarSeedEntry {
   model: string;
   year: number;
   category: string;
+  imageUrl?: string | null;
+  imageKey?: string | null;
 }
 
 export class DatabaseSeeder {
@@ -45,9 +47,17 @@ export class DatabaseSeeder {
 
     for (const car of cars) {
       await this.databaseClient.execute(
-        `INSERT OR IGNORE INTO cars (game_id, make, model, year, category)
-         VALUES (?, ?, ?, ?, ?)`,
-        [game.id, car.make, car.model, car.year, car.category],
+        `INSERT OR IGNORE INTO cars (game_id, make, model, year, category, image_url, image_key)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          game.id,
+          car.make,
+          car.model,
+          car.year,
+          car.category,
+          car.imageUrl ?? null,
+          car.imageKey ?? null,
+        ],
       );
     }
   }

@@ -20,6 +20,7 @@ interface CarEntry {
   year: number;
   category: string | null;
   imageUrl?: string | null;
+  imageKey?: string | null;
 }
 
 function escapeSql(value: string): string {
@@ -47,8 +48,9 @@ for (const game of games) {
   for (const car of cars) {
     const category = car.category ? `'${escapeSql(car.category)}'` : "NULL";
     const imageUrl = car.imageUrl ? `'${escapeSql(car.imageUrl)}'` : "NULL";
+    const imageKey = car.imageKey ? `'${escapeSql(car.imageKey)}'` : "NULL";
     statements.push(
-      `INSERT OR IGNORE INTO cars (game_id, make, model, year, category, image_url) VALUES ((SELECT id FROM games WHERE slug = '${escapeSql(game.slug)}'), '${escapeSql(car.make)}', '${escapeSql(car.model)}', ${car.year}, ${category}, ${imageUrl});`,
+      `INSERT OR IGNORE INTO cars (game_id, make, model, year, category, image_url, image_key) VALUES ((SELECT id FROM games WHERE slug = '${escapeSql(game.slug)}'), '${escapeSql(car.make)}', '${escapeSql(car.model)}', ${car.year}, ${category}, ${imageUrl}, ${imageKey});`,
     );
   }
 

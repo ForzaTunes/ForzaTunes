@@ -54,15 +54,66 @@ TL;DR:
 
 ## Adding cars
 
-Car lists live in [src/data/cars/](./src/data/cars/). To add missing entries:
+Car lists live in [src/data/cars/](./src/data/cars/). Car images are
+self-hosted on Cloudflare R2 and delivered through Cloudflare Image
+Transformations; contributors **do not need R2 credentials** to add a car.
+
+To add a missing entry:
 
 1. Find the right file for the game (e.g. `fh5.json`).
-2. Insert an entry following the existing shape:
+2. Insert an entry following the existing shape. Leave `imageKey` as `null` —
+   a maintainer populates it after running the migration script. Provide
+   `imageUrl` as the canonical Wikia (or equivalent) link to the car photo:
    ```json
-   { "make": "Toyota", "model": "GR86", "year": 2022, "category": "Modern Sports Cars" }
+   {
+     "make": "Toyota",
+     "model": "GR86",
+     "year": 2022,
+     "category": "Modern Sports Cars",
+     "imageUrl": "https://static.wikia.nocookie.net/forzamotorsport/images/...",
+     "imageKey": null
+   }
    ```
 3. Keep the array sorted by `make`, then `model`.
 4. Open a PR titled `data: add {make} {model} to {game}`.
+
+### Maintainer: running the image migration
+
+Before merging a PR that adds new cars (or periodically to refresh missing
+images), a maintainer with R2 credentials runs:
+
+```bash
+npm run images:migrate
+```
+
+This script:
+
+- Reads every `src/data/cars/*.json` file.
+- Skips any car that already has an `imageKey`.
+- For each remaining car, downloads the image from `imageUrl` (retrying
+  transient failures) and uploads it to R2 under
+  `cars/{gameSlug}/{uuid}.{ext}`.
+- Writes the resulting `imageKey` back into the JSON.
+
+Set up `.env` first (never commit it) using the maintainer-only variables
+documented in [.env.example](./.env.example):
+
+```env
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=forzatunes-images
+R2_PUBLIC_BASE_URL=https://images.forzatunes.com
+```
+
+If a Wikia fetch fails (e.g. 404), drop a manually-sourced image into
+`scripts/images/fallbacks/{fallbackId}.{png|jpg|webp}` using the
+`fallbackId` the script logs, then re-run `npm run images:migrate`. The
+script is idempotent — already-migrated cars are skipped on subsequent runs.
+
+After a successful migration, commit the updated `src/data/cars/*.json`
+files and run `npm run db:seed:remote` to push the new `imageKey` values
+into the production D1 database.
 
 ## Adding a new game
 

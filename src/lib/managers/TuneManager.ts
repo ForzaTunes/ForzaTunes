@@ -31,6 +31,7 @@ SELECT
   t.user_id, t.created_at, t.updated_at,
   c.make AS car_make, c.model AS car_model, c.year AS car_year,
   c.category AS car_category, c.image_url AS car_image_url,
+  c.image_key AS car_image_key,
   u.username AS creator_username,
   COALESCE(sc.star_count, 0) AS star_count
 FROM tunes t

@@ -24,6 +24,7 @@ export interface TuneWithDetails extends Tune {
   carYear: number;
   carCategory: string | null;
   carImageUrl: string | null;
+  carImageKey: string | null;
   starCount: number;
   creatorUsername: string;
 }

@@ -34,9 +34,11 @@ export class ResponseCache {
     "/api/",
     "/auth/",
     "/profile",
-    "/submit",
   ];
-  private static readonly EXCLUDED_SUFFIXES: readonly string[] = ["/edit"];
+  private static readonly EXCLUDED_SUFFIXES: readonly string[] = [
+    "/submit",
+    "/edit",
+  ];
 
   constructor(
     private readonly versions: ICacheVersionManager,

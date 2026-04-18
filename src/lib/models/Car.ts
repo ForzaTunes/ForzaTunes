@@ -6,4 +6,5 @@ export interface Car {
   year: number;
   category: string | null;
   imageUrl: string | null;
+  imageKey: string | null;
 }

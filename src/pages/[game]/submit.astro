@@ -37,6 +37,7 @@ interface GroupedCar {
   year: number;
   category: string | null;
   imageUrl: string | null;
+  imageKey: string | null;
 }
 const carsByMake: Record<string, GroupedCar[]> = {};
 for (const car of cars) {
@@ -48,6 +49,7 @@ for (const car of cars) {
     year: car.year,
     category: car.category,
     imageUrl: car.imageUrl,
+    imageKey: car.imageKey,
   });
   carsByMake[car.make] = group;
 }
