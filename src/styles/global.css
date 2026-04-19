@@ -143,6 +143,85 @@ html::-webkit-scrollbar-thumb:hover {
  * Horizontal fade is slightly wider than vertical because car subjects
  * are usually centered horizontally while filling the frame top to bottom.
  */
+/*
+ * Tinted, faded car silhouette used as a fallback when no real car photo
+ * is available. The PNG at /images/placeholdercar.png is a white-on-transparent
+ * line stencil; we use it as a mask and fill with the active theme accent so
+ * the placeholder auto-themes per game (orange on FH5, red on FM, pink on FH6).
+ */
+.fz-car-stencil {
+  -webkit-mask-image: url("/images/placeholdercar.png");
+  -webkit-mask-repeat: no-repeat;
+  mask-image: url("/images/placeholdercar.png");
+  mask-repeat: no-repeat;
+  background-color: var(--color-accent-500);
+}
+
+.fz-car-stencil-right {
+  -webkit-mask-position: 100% 35%;
+  -webkit-mask-size: auto 175%;
+  mask-position: 100% 35%;
+  mask-size: auto 175%;
+}
+
+.fz-car-stencil-center {
+  -webkit-mask-position: center;
+  -webkit-mask-size: auto 170%;
+  mask-position: center;
+  mask-size: auto 170%;
+}
+
+/*
+ * Celebration animation when the user stars a tune.
+ * Three layered effects play together for ~600ms:
+ *   - .fz-star-pop: the star icon itself bounces with a slight overshoot.
+ *   - .fz-star-halo: a soft yellow ring expands outward from the icon.
+ *   - .fz-star-particle: small stars burst radially using a per-element
+ *     `--fz-particle-translate` custom property to set their end direction.
+ */
+@keyframes fz-star-pop {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.45); }
+  60%  { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fz-star-halo {
+  0%   { transform: scale(0.3); opacity: 0.7; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes fz-star-particle {
+  0%   { transform: translate(0, 0) scale(0.4); opacity: 0; }
+  20%  { opacity: 1; }
+  100% {
+    transform: var(--fz-particle-translate, translate(0, 0)) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.fz-star-pop {
+  animation: fz-star-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  display: inline-flex;
+}
+
+.fz-star-halo {
+  animation: fz-star-halo 520ms ease-out both;
+  transform-origin: center;
+}
+
+.fz-star-particle {
+  animation: fz-star-particle 600ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fz-star-pop,
+  .fz-star-halo,
+  .fz-star-particle {
+    animation: none !important;
+  }
+}
+
 .fz-edge-fade {
   --fz-edge-fade-h: linear-gradient(
     to right,

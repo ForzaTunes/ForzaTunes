@@ -1,0 +1,32 @@
+---
+/**
+ * Atmospheric fallback used in place of a missing car photo.
+ *
+ * Two layers stacked:
+ *   1. A soft accent radial-ish gradient backdrop (preserves the original
+ *      "soft blur" feel the cards had before).
+ *   2. The white car-line stencil at /images/placeholdercar.png
+ *
+ */
+interface Props {
+  position?: "right" | "center";
+  opacity?: number;
+}
+
+const { position = "right", opacity = 0.08 } = Astro.props;
+
+const positionClass =
+  position === "center" ? "fz-car-stencil-center" : "fz-car-stencil-right";
+---
+
+<div
+  aria-hidden="true"
+  class="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent-900/30 via-transparent to-transparent"
+>
+</div>
+<div
+  aria-hidden="true"
+  class={`fz-car-stencil ${positionClass} pointer-events-none absolute inset-0`}
+  style={`opacity: ${opacity}`}
+>
+</div>

@@ -3,6 +3,7 @@ import ShareCodeDisplay from "./ShareCodeDisplay.astro";
 import InGameClassPill from "./submit/InGameClassPill";
 import StarButton from "./tune/StarButton";
 import TuneCardOwnerMenu from "./profile/TuneCardOwnerMenu";
+import CarPlaceholderTint from "./common/CarPlaceholderTint.astro";
 import { formatCarSubtitle } from "../lib/utils/formatCarSubtitle";
 import {
   CAR_IMAGE_ONERROR,
@@ -66,10 +67,7 @@ const resolvedCarImage = CarImageUrlResolver.forCar(
         class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgb(17,24,39,1)_0%,rgba(17,24,39,0.45)_40%,rgba(17,24,39,0.65)_100%)]"
       ></div>
     ) : (
-      <div
-        aria-hidden="true"
-        class="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent-900/30 via-transparent to-transparent"
-      ></div>
+      <CarPlaceholderTint position="right" />
     )}
 
     <div class="relative flex items-start justify-between gap-3">

@@ -124,8 +124,8 @@ const gameConfigsBySlug = new Map<string, GameConfig>([
   />
 
   <RelatedTunes
-    title="Similar tunes"
-    subtitle={`Other ${tune.carClass}-class ${tuneTypeLabel.toLowerCase()} builds`}
+    title={`Other ${tune.carClass}-class ${tuneTypeLabel.toLowerCase()} builds`}
+    subtitle=''
     tunes={similarTunesWithSlug}
     starredTuneIds={relatedStarredTuneIds}
     isLoggedIn={isLoggedIn}

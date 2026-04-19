@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import StarBurstOverlay from "./StarBurstOverlay";
+
+const BURST_DURATION_MS = 650;
 
 interface StarButtonProps {
   tuneId: number;
@@ -40,6 +43,14 @@ export default function StarButton({
   const [starred, setStarred] = useState(initialStarred);
   const [count, setCount] = useState(initialCount);
   const [pending, setPending] = useState(false);
+  const [bursting, setBursting] = useState(false);
+  const burstTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (burstTimeoutRef.current) clearTimeout(burstTimeoutRef.current);
+    };
+  }, []);
 
   async function handleClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -58,6 +69,15 @@ export default function StarButton({
     setStarred(!starred);
     setCount(starred ? count - 1 : count + 1);
     setPending(true);
+
+    if (!previousStarred) {
+      if (burstTimeoutRef.current) clearTimeout(burstTimeoutRef.current);
+      setBursting(true);
+      burstTimeoutRef.current = setTimeout(
+        () => setBursting(false),
+        BURST_DURATION_MS,
+      );
+    }
 
     try {
       const response = await fetch("/api/stars", {
@@ -84,35 +104,53 @@ export default function StarButton({
     }
   }
 
-  const ariaLabel = starred ? "Unstar this tune" : "Star this tune";
+  const ariaLabel = starred
+    ? "Unstar this tune"
+    : "Star this tune to save it for later";
+  const tooltip = starred
+    ? "Unstar this tune"
+    : "Star this tune to save it for later";
 
   if (variant === "pill") {
     const starsWord = count === 1 ? "STAR" : "STARS";
+
+    const frameClasses = starred
+      ? "border-gray-700 divide-gray-700 hover:border-accent-500"
+      : "border-accent-500 divide-accent-500/40 hover:border-accent-400";
+
+    const iconChipClasses = starred
+      ? "bg-gray-900 text-yellow-400"
+      : "bg-accent-500/15 text-accent-300";
+
     return (
-      <button
-        onClick={handleClick}
-        disabled={pending}
-        aria-label={ariaLabel}
-        className={`inline-flex items-stretch text-sm font-heading font-bold uppercase tracking-widest border border-gray-700 divide-x divide-gray-700 overflow-hidden transition-colors ${
-          pending ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-accent-500"
-        }`}
-      >
-        <span className="px-3 py-1.5 bg-gray-950/60 flex items-center gap-1.5">
-          <span className="text-accent-400">{count}</span>
-          <span className="text-gray-300">{starsWord}</span>
-        </span>
-        <span
-          className={`px-3 py-1.5 bg-gray-900 flex items-center ${
-            starred ? "text-yellow-400" : "text-gray-400"
+      <span className="relative inline-flex">
+        <button
+          onClick={handleClick}
+          disabled={pending}
+          aria-label={ariaLabel}
+          title={tooltip}
+          className={`inline-flex items-stretch text-sm font-heading font-bold uppercase tracking-widest border divide-x transition-colors ${frameClasses} ${
+            pending ? "cursor-not-allowed" : "cursor-pointer"
           }`}
         >
-          {starred ? (
-            <StarFilledIcon className="w-5 h-5" />
-          ) : (
-            <StarOutlineIcon className="w-5 h-5" />
-          )}
-        </span>
-      </button>
+          <span className="px-3 py-1.5 bg-gray-950/60 flex items-center gap-1.5">
+            <span className={starred ? "text-accent-400" : "text-white"}>
+              {count}
+            </span>
+            <span className="text-gray-300">{starsWord}</span>
+          </span>
+          <span className={`px-3 py-1.5 flex items-center ${iconChipClasses}`}>
+            <span className={bursting ? "fz-star-pop" : "inline-flex"}>
+              {starred ? (
+                <StarFilledIcon className="w-5 h-5" />
+              ) : (
+                <StarOutlineIcon className="w-5 h-5" />
+              )}
+            </span>
+          </span>
+        </button>
+        <StarBurstOverlay active={bursting} />
+      </span>
     );
   }
 

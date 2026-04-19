@@ -29,7 +29,7 @@ const displayName = user ? (user.forzaGamertag ?? user.username) : "";
 
 <header class="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm sticky top-0 z-50">
   <div class="max-w-6xl mx-auto px-4 py-3">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-4">
         <a href="/" class="text-xl font-heading font-bold italic uppercase tracking-widest text-white hover:text-accent-400 transition-colors">
           FORZA<span class="text-accent-400">TUNES</span>
@@ -43,23 +43,27 @@ const displayName = user ? (user.forzaGamertag ?? user.username) : "";
           <div class="user-dropdown relative">
             <button
               type="button"
-              class="flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
+              class="inline-flex items-stretch h-8 text-xs font-heading font-bold uppercase tracking-widest border border-gray-700 divide-x divide-gray-700 bg-gray-900 text-gray-300 hover:border-accent-500 hover:text-accent-300 transition-colors"
             >
-              <span>{displayName}</span>
-              {user.id === 0 && (
-                <span class="text-[10px] font-heading uppercase tracking-wider text-yellow-400 border border-yellow-600 px-1 py-px leading-tight">Dev</span>
-              )}
-              {user.avatarUrl ? (
-                <img
-                  src={user.avatarUrl}
-                  alt={displayName}
-                  class="w-7 h-7"
-                />
-              ) : (
-                <div class="w-7 h-7 bg-gray-600 flex items-center justify-center text-xs font-medium">
-                  {displayName.charAt(0).toUpperCase()}
-                </div>
-              )}
+              <span class="px-3 flex items-center gap-2">
+                <span>{displayName}</span>
+                {user.id === 0 && (
+                  <span class="text-[10px] font-heading uppercase tracking-wider text-yellow-400 border border-yellow-600 px-1 py-px leading-tight">Dev</span>
+                )}
+              </span>
+              <span class="aspect-square h-full shrink-0 flex items-center justify-center bg-gray-950/60 overflow-hidden">
+                {user.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={displayName}
+                    class="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span class="w-full h-full flex items-center justify-center bg-gray-700 text-xs font-medium text-white">
+                    {displayName.charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </span>
             </button>
             <div class="user-menu absolute right-0 mt-1 w-48 border border-gray-700 bg-gray-900 shadow-xl z-50 opacity-0 invisible transition-all duration-150">
               <a

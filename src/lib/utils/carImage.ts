@@ -5,9 +5,17 @@ export interface CarImageSource {
   imageUrl?: string | null;
 }
 
-export const CAR_IMAGE_PLACEHOLDER = "/images/car-placeholder.svg";
+export const CAR_IMAGE_PLACEHOLDER = "/images/placeholdercar.png";
 
-export const CAR_IMAGE_ONERROR = `this.onerror=null;this.src='${CAR_IMAGE_PLACEHOLDER}'`;
+/**
+ * Hides the <img> on load failure rather than swapping its `src`. The car
+ * photo elements use aggressive transforms (mirroring, scale, edge fades) that
+ * would render any swapped-in placeholder image incorrectly. Whenever a card
+ * has no image source at all, render <CarPlaceholderTint /> instead — that
+ * component uses the placeholder as a CSS mask so it inherits the card's
+ * accent theme.
+ */
+export const CAR_IMAGE_ONERROR = `this.onerror=null;this.style.display='none'`;
 
 export class CarImageUrlResolver {
   private static readonly R2_PUBLIC_BASE = "https://images.forzatunes.com";

@@ -18,24 +18,106 @@ function buildPageUrl(page: number): string {
 
 const hasPrev = currentPage > 1;
 const hasNext = currentPage < totalPages;
+
+const firstUrl = hasPrev ? buildPageUrl(1) : undefined;
+const prevUrl = hasPrev ? buildPageUrl(currentPage - 1) : undefined;
+const nextUrl = hasNext ? buildPageUrl(currentPage + 1) : undefined;
+const lastUrl = hasNext ? buildPageUrl(totalPages) : undefined;
+
+const ACTIVE_CLASSES =
+  "px-3 py-1.5 bg-gray-900 text-accent-400 hover:bg-accent-500/15 hover:text-accent-300 flex items-center transition-colors";
+const DISABLED_CLASSES =
+  "px-3 py-1.5 bg-gray-900 text-gray-600 flex items-center pointer-events-none opacity-40";
 ---
 
-<nav class="flex items-center justify-center gap-4 mt-8">
-  <a
-    href={hasPrev ? buildPageUrl(currentPage - 1) : undefined}
-    class={`px-4 py-2 bg-gray-800 text-gray-300 hover:bg-accent-600 hover:text-white transition-colors ${!hasPrev ? "opacity-50 pointer-events-none" : ""}`}
-    aria-disabled={!hasPrev}
+<nav class="mt-8 flex justify-center" aria-label="Pagination">
+  <div
+    class="inline-flex items-stretch text-sm font-heading font-bold uppercase tracking-widest border border-gray-700 divide-x divide-gray-700"
   >
-    Previous
-  </a>
-  <span class="text-sm text-gray-400">
-    Page {currentPage} of {totalPages}
-  </span>
-  <a
-    href={hasNext ? buildPageUrl(currentPage + 1) : undefined}
-    class={`px-4 py-2 bg-gray-800 text-gray-300 hover:bg-accent-600 hover:text-white transition-colors ${!hasNext ? "opacity-50 pointer-events-none" : ""}`}
-    aria-disabled={!hasNext}
-  >
-    Next
-  </a>
+    <a
+      href={firstUrl}
+      aria-label="First page"
+      aria-disabled={!hasPrev}
+      class={hasPrev ? ACTIVE_CLASSES : DISABLED_CLASSES}
+    >
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2.5"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M11 19l-7-7 7-7m7 14l-7-7 7-7"
+        />
+      </svg>
+    </a>
+    <a
+      href={prevUrl}
+      aria-label="Previous page"
+      aria-disabled={!hasPrev}
+      class={hasPrev ? ACTIVE_CLASSES : DISABLED_CLASSES}
+    >
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2.5"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    </a>
+    <span
+      class="px-4 py-1.5 bg-gray-950/60 flex items-center gap-2"
+      aria-current="page"
+    >
+      <span class="text-gray-500">Page</span>
+      <span class="text-accent-400 tabular-nums">{currentPage}</span>
+      <span class="text-gray-500">of</span>
+      <span class="text-white tabular-nums">{totalPages}</span>
+    </span>
+    <a
+      href={nextUrl}
+      aria-label="Next page"
+      aria-disabled={!hasNext}
+      class={hasNext ? ACTIVE_CLASSES : DISABLED_CLASSES}
+    >
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2.5"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </a>
+    <a
+      href={lastUrl}
+      aria-label="Last page"
+      aria-disabled={!hasNext}
+      class={hasNext ? ACTIVE_CLASSES : DISABLED_CLASSES}
+    >
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2.5"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M13 5l7 7-7 7M6 5l7 7-7 7"
+        />
+      </svg>
+    </a>
+  </div>
 </nav>
