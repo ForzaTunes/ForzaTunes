@@ -7,6 +7,7 @@ import { OgInGamePill } from "./OgInGamePill";
 import { OgLogo } from "./OgLogo";
 import { OgStarBadge } from "./OgStarBadge";
 import { TuneOgFooter } from "./TuneOgFooter";
+import { TuneOgShareCode } from "./TuneOgShareCode";
 import { TuneOgTitleBlock } from "./TuneOgTitleBlock";
 
 interface Props {
@@ -131,6 +132,17 @@ function Foreground({
           creatorGamertag={tune.creatorGamertag}
           gameName={gameName}
         />
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          position: "absolute",
+          right: PADDING,
+          bottom: PADDING,
+        }}
+      >
+        <TuneOgShareCode shareCode={tune.shareCode} gameSlug={gameSlug} />
       </div>
     </div>
   );

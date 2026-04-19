@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "wrangler pages dev dist",
+    "preview": "wrangler dev --config dist/server/wrangler.json",
     "db:migrate:local": "wrangler d1 migrations apply forzatunes-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply forzatunes-db --remote",
     "scrape:cars": "npx tsx scripts/scrape-cars.ts",
