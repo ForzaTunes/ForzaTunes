@@ -4,6 +4,12 @@ import { OG_DIMENSIONS } from "../OgTheme";
 interface Props {
   imageUrl: string;
   width: number;
+  /**
+   * Vertical offset in px applied to the backdrop. Negative values shift the
+   * car image upward, useful when bottom-right card content (e.g. the share
+   * code chip on tune cards) would otherwise overlap the car's wheels.
+   */
+  verticalShift?: number;
 }
 
 /**
@@ -13,7 +19,11 @@ interface Props {
  * We avoid the CSS `inset` shorthand because Satori does not support it —
  * explicit top/right/bottom/left are required.
  */
-export function OgCarBackdrop({ imageUrl, width }: Props): ReactElement {
+export function OgCarBackdrop({
+  imageUrl,
+  width,
+  verticalShift = 0,
+}: Props): ReactElement {
   const h = OG_DIMENSIONS.height;
 
   return (
@@ -22,7 +32,7 @@ export function OgCarBackdrop({ imageUrl, width }: Props): ReactElement {
         display: "flex",
         position: "absolute",
         right: 0,
-        top: 0,
+        top: verticalShift,
         width,
         height: h,
       }}

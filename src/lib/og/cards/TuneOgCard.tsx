@@ -21,6 +21,8 @@ interface Props {
 const PADDING = 56;
 const CAR_WIDTH = 780;
 const BADGE_SCALE = 1.35;
+// Lifts the car so its wheels clear the bottom-right share code chip.
+const CAR_VERTICAL_SHIFT = -30;
 
 export function TuneOgCard({
   tune,
@@ -32,7 +34,11 @@ export function TuneOgCard({
   return (
     <OgCardFrame>
       {carImageDataUrl ? (
-        <OgCarBackdrop imageUrl={carImageDataUrl} width={CAR_WIDTH} />
+        <OgCarBackdrop
+          imageUrl={carImageDataUrl}
+          width={CAR_WIDTH}
+          verticalShift={CAR_VERTICAL_SHIFT}
+        />
       ) : null}
       <Foreground
         tune={tune}

@@ -25,10 +25,10 @@ export function TuneOgShareCode({ shareCode, gameSlug }: Props): ReactElement {
         gap: 8,
       }}
     >
-      <div
+      {/* <div
         style={{
           display: "flex",
-          fontSize: 16,
+          fontSize: 24,
           fontWeight: 700,
           letterSpacing: "0.2em",
           textTransform: "uppercase",
@@ -36,16 +36,16 @@ export function TuneOgShareCode({ shareCode, gameSlug }: Props): ReactElement {
         }}
       >
         Share Code
-      </div>
+      </div> */}
       <div
         style={{
           display: "flex",
-          fontSize: 36,
+          fontSize: 42,
           fontWeight: 700,
           letterSpacing: "0.18em",
           color: theme.accent300,
           background: OG_PALETTE.surfaceElevated,
-          padding: "10px 20px",
+          padding: "12px 24px",
           fontVariantNumeric: "tabular-nums",
         }}
       >

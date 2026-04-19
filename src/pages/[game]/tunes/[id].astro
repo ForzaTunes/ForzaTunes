@@ -29,7 +29,7 @@ const [moreByCreatorRaw, similarRaw] = await Promise.all([
   tunes.getByUser(tune.userId, RELATED_LIMIT + 1, 0, { gameId: tune.gameId }),
   tunes.search(
     tune.gameId,
-    { carClass: tune.carClass, tuneType: tune.tuneType },
+    { carClasses: [tune.carClass], tuneTypes: [tune.tuneType] },
     "most_starred",
     { page: 1, pageSize: RELATED_LIMIT + 1 },
   ),
