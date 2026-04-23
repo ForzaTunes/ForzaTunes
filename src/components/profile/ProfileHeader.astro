@@ -1,5 +1,6 @@
 ---
 import GamertagEditor from "./GamertagEditor";
+import ProfileShareButton from "./ProfileShareButton";
 import type { UserProfile } from "../../lib/models";
 
 interface Props {
@@ -12,6 +13,7 @@ const { profileUser, isOwner, ownerDiscordUsername } = Astro.props;
 
 const displayName = profileUser.forzaGamertag ?? profileUser.username;
 const initial = displayName.charAt(0).toUpperCase();
+const publicPath = `/u/${profileUser.publicSlug}`;
 ---
 
 <div class="flex items-start gap-4 mb-6">
@@ -38,5 +40,13 @@ const initial = displayName.charAt(0).toUpperCase();
     {isOwner && (
       <GamertagEditor client:load initial={profileUser.forzaGamertag} />
     )}
+  </div>
+  <div class="shrink-0">
+    <ProfileShareButton
+      client:load
+      publicPath={publicPath}
+      displayName={displayName}
+      isOwner={isOwner}
+    />
   </div>
 </div>
