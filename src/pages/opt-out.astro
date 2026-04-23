@@ -1,0 +1,109 @@
+---
+export const prerender = true;
+
+import PageShell from "../components/layout/PageShell.astro";
+
+const contactEmail = "admin@forzatunes.com";
+const mailtoSubject = encodeURIComponent("Tune removal request");
+const mailtoBody = encodeURIComponent(
+  [
+    "Hi ForzaTunes admin,",
+    "",
+    "Please remove the following imported tune(s) attributed to my gamertag:",
+    "",
+    "Gamertag: ",
+    "Share code(s) or tune URL(s): ",
+    "Source URL (if known): ",
+    "",
+    "Thanks.",
+  ].join("\n"),
+);
+const mailto = `mailto:${contactEmail}?subject=${mailtoSubject}&body=${mailtoBody}`;
+---
+
+<PageShell
+  title="Imports & Takedowns — ForzaTunes"
+  description="How ForzaTunes imports community tunes, and how creators can request removal."
+  canonicalUrl="/opt-out"
+>
+  <div class="max-w-3xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-heading font-bold text-white mb-2">
+      Imports & Takedowns
+    </h1>
+    <p class="text-sm text-gray-500 mb-8">
+      For creators whose tunes have been imported from public sources.
+    </p>
+
+    <div
+      class="prose prose-invert prose-gray max-w-none space-y-8 text-gray-300 text-sm leading-relaxed"
+    >
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">
+          What are imports?
+        </h2>
+        <p>
+          ForzaTunes indexes community tunes from public spreadsheets and
+          threads so the site is useful from day one. Every imported tune
+          links back to the original source and credits the creator by
+          their Forza gamertag. We do not fabricate stars or reviews, and
+          imported tunes are visually identical to native submissions so
+          creator credit is the same either way.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">
+          How to tell if a tune was imported
+        </h2>
+        <p>
+          Imported tunes show an "Imported with attribution" line on the
+          tune detail page, linking to the original source. Tunes submitted
+          directly on ForzaTunes don't show that line.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">
+          Request removal
+        </h2>
+        <p>
+          If any of your tunes have been imported and you'd like them
+          removed, email us at
+          <a href={mailto} class="text-accent-400 hover:text-accent-300 underline">{contactEmail}</a>
+          with:
+        </p>
+        <ul class="list-disc list-inside space-y-1 text-gray-400">
+          <li>Your Forza gamertag.</li>
+          <li>
+            One or more share codes, tune URLs, or the source URL you'd like
+            removed. "All of my tunes" is fine too.
+          </li>
+          <li>Optional: confirmation of your identity (a DM or post on the source thread).</li>
+        </ul>
+        <p>
+          We aim to action requests within a few days. Removals delete the
+          tune rows and the stub creator row if no other tunes remain.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">
+          Prefer to claim your profile instead?
+        </h2>
+        <p>
+          If you'd rather keep the tunes and take ownership, let us know in
+          the same email. When account linking is available we'll merge the
+          stub profile onto your Discord account so you can edit, add, and
+          reply as yourself.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-heading font-semibold text-white">Contact</h2>
+        <p>
+          <a href={mailto} class="text-accent-400 hover:text-accent-300 underline">{contactEmail}</a>
+        </p>
+      </section>
+    </div>
+  </div>
+</PageShell>

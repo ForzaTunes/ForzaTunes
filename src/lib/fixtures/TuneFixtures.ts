@@ -137,6 +137,8 @@ export function generateDemoTunes(): Tune[] {
           userId: user.id,
           createdAt,
           updatedAt: createdAt,
+          sourceUrl: null,
+          importedAt: null,
         });
       }
     }

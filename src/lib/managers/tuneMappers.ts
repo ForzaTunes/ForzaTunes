@@ -16,6 +16,8 @@ export interface TuneWithDetailsRow {
   user_id: number;
   created_at: string;
   updated_at: string;
+  source_url: string | null;
+  imported_at: string | null;
   car_make: string;
   car_model: string;
   car_year: number;
@@ -43,6 +45,8 @@ export interface TuneRow {
   user_id: number;
   created_at: string;
   updated_at: string;
+  source_url: string | null;
+  imported_at: string | null;
 }
 
 function toDrivetrain(value: string | null): Drivetrain | null {
@@ -67,6 +71,8 @@ export function mapRowToTune(row: TuneRow): Tune {
     userId: row.user_id,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    sourceUrl: row.source_url,
+    importedAt: row.imported_at,
   };
 }
 
@@ -89,6 +95,8 @@ export function mapRowToTuneWithDetails(
     userId: row.user_id,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    sourceUrl: row.source_url,
+    importedAt: row.imported_at,
     carMake: row.car_make,
     carModel: row.car_model,
     carYear: row.car_year,

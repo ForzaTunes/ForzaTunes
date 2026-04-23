@@ -15,6 +15,8 @@
     "scrape:cars": "npx tsx scripts/scrape-cars.ts",
     "db:seed:local": "npx tsx src/lib/db/run-seed.ts --local",
     "db:seed:remote": "npx tsx src/lib/db/run-seed.ts --remote",
+    "ingest:tunes:local": "npx tsx src/lib/db/run-ingest-tunes.ts --local",
+    "ingest:tunes:remote": "npx tsx src/lib/db/run-ingest-tunes.ts --remote",
     "images:migrate": "npx tsx scripts/images/migrate-car-images.ts"
   },
   "dependencies": {

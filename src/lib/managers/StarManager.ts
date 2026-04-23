@@ -129,6 +129,7 @@ export class StarManager implements IStarManager {
          t.creator_gamertag, t.tune_type, t.pi_rating, t.car_class,
          t.drivetrain, t.track_name,
          t.user_id, t.created_at, t.updated_at,
+         t.source_url, t.imported_at,
          c.make AS car_make, c.model AS car_model, c.year AS car_year,
          c.category AS car_category, c.image_url AS car_image_url,
          c.image_key AS car_image_key,

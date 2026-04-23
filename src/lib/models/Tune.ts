@@ -16,6 +16,8 @@ export interface Tune {
   userId: number;
   createdAt: string;
   updatedAt: string;
+  sourceUrl: string | null;
+  importedAt: string | null;
 }
 
 export interface TuneWithDetails extends Tune {

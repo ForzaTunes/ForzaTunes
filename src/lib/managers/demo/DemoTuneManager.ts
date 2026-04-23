@@ -144,6 +144,8 @@ export class DemoTuneManager implements ITuneManager {
       userId: input.userId,
       createdAt: now,
       updatedAt: now,
+      sourceUrl: null,
+      importedAt: null,
     };
     this.store.tunes.unshift(tune);
     return id;

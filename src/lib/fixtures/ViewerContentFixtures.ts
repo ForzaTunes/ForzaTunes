@@ -87,6 +87,8 @@ export function generateViewerContent(
         userId: viewer.id,
         createdAt,
         updatedAt: createdAt,
+        sourceUrl: null,
+        importedAt: null,
       };
       tunes.push(tune);
 

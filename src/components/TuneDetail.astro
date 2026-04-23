@@ -93,16 +93,28 @@ const gameConfigsBySlug = new Map<string, GameConfig>([
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
     <div class="lg:col-span-2 flex flex-col gap-4 min-w-0">
-      {tune.description && (
-        <section class="flex-1 border border-gray-700 bg-gray-900 p-5">
-          <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">
-            Description
-          </h2>
-          <p class="text-gray-200 leading-relaxed whitespace-pre-wrap">
-            {tune.description}
+      <section class="border border-gray-700 bg-gray-900 p-5 flex flex-col gap-4">
+        <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500">
+          Description
+        </h2>
+        {tune.description ? (
+          <p class="text-gray-200 leading-relaxed whitespace-pre-wrap">{tune.description.trim()}</p>
+        ) : (
+          <p class="text-gray-500 italic">No description provided.</p>
+        )}
+        {tune.sourceUrl && (
+          <p class="text-xs text-gray-500 leading-relaxed pt-4 border-t border-gray-700/60">
+            Imported with attribution.{" "}
+            <a
+              href={tune.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="underline hover:text-accent-400"
+            >View original source</a>.{" "}
+            <a href="/opt-out" class="underline hover:text-accent-400">Request removal</a>.
           </p>
-        </section>
-      )}
+        )}
+      </section>
     </div>
 
     <div class="lg:col-span-1">
