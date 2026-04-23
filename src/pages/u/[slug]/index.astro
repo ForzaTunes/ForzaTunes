@@ -105,8 +105,9 @@ const activeGameSlug =
     activeGameSlug={activeGameSlug}
     activeSort={activeSort}
     page={page}
-    limit={limit}
+    totalPages={data.totalPages}
     baseUrl={baseUrl}
+    searchParams={url.searchParams}
     viewerLoggedIn={!!viewer}
   />
 </PageShell>

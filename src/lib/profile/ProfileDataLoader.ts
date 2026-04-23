@@ -33,6 +33,8 @@ export interface ProfileData {
   gameConfigsBySlug: Map<string, GameConfig>;
   availableGames: ProfileGameOption[];
   resolvedGameId: number | null;
+  totalItems: number;
+  totalPages: number;
 }
 
 export interface ProfileLoadOptions {
@@ -70,7 +72,7 @@ export class ProfileDataLoader {
 
     const offset = (page - 1) * limit;
 
-    const [tuneCount, starsReceived, tunesRaw] = await Promise.all([
+    const [tuneCount, starsReceived, tunesRaw, totalItems] = await Promise.all([
       this.managers.tunes.countByUser(profileUserId),
       this.managers.stars.countReceivedByUser(profileUserId),
       this.loadTabTunes(
@@ -81,7 +83,10 @@ export class ProfileDataLoader {
         resolvedGameId,
         sort,
       ),
+      this.countTabTunes(profileUserId, activeTab, resolvedGameId),
     ]);
+
+    const totalPages = limit > 0 ? Math.ceil(totalItems / limit) : 0;
 
     const gameSlugMap = new Map(games.map((g) => [g.id, g.slug]));
     const tunes: ProfileTuneItem[] = tunesRaw.map((t) => ({
@@ -113,7 +118,21 @@ export class ProfileDataLoader {
       gameConfigsBySlug,
       availableGames,
       resolvedGameId,
+      totalItems,
+      totalPages,
     };
+  }
+
+  private async countTabTunes(
+    profileUserId: number,
+    activeTab: ProfileTab,
+    gameId: number | null,
+  ): Promise<number> {
+    const opts = gameId !== null ? { gameId } : undefined;
+    if (activeTab === "starred") {
+      return this.managers.stars.countStarredByUser(profileUserId, opts);
+    }
+    return this.managers.tunes.countByUser(profileUserId, opts);
   }
 
   private async loadTabTunes(
@@ -158,6 +177,8 @@ export class ProfileDataLoader {
       gameConfigsBySlug: new Map(),
       availableGames: [],
       resolvedGameId: null,
+      totalItems: 0,
+      totalPages: 0,
     };
   }
 }

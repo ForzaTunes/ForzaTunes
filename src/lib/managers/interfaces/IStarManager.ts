@@ -22,4 +22,8 @@ export interface IStarManager {
     offset: number,
     opts?: StarredTunesQuery,
   ): Promise<TuneWithDetails[]>;
+  countStarredByUser(
+    userId: number,
+    opts?: StarredTunesQuery,
+  ): Promise<number>;
 }

@@ -116,8 +116,12 @@ export class DemoTuneManager implements ITuneManager {
     return this.store.tunes.filter((t) => t.gameId === gameId).length;
   }
 
-  async countByUser(userId: number): Promise<number> {
-    return this.store.tunes.filter((t) => t.userId === userId).length;
+  async countByUser(userId: number, opts?: UserTunesQuery): Promise<number> {
+    const gameId = opts?.gameId;
+    return this.store.tunes.filter(
+      (t) =>
+        t.userId === userId && (gameId === undefined || t.gameId === gameId),
+    ).length;
   }
 
   async create(input: ValidatedTuneSubmission): Promise<number> {

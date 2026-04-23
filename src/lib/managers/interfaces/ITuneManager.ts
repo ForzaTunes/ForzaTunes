@@ -64,7 +64,7 @@ export interface ITuneManager {
     opts?: UserTunesQuery,
   ): Promise<TuneWithDetails[]>;
   countByGame(gameId: number): Promise<number>;
-  countByUser(userId: number): Promise<number>;
+  countByUser(userId: number, opts?: UserTunesQuery): Promise<number>;
   create(input: ValidatedTuneSubmission): Promise<number>;
   update(id: number, userId: number, input: TuneUpdateInput): Promise<boolean>;
   delete(id: number, userId: number): Promise<boolean>;

@@ -152,4 +152,24 @@ export class StarManager implements IStarManager {
     );
     return rows.map(mapRowToTuneWithDetails);
   }
+
+  async countStarredByUser(
+    userId: number,
+    opts?: StarredTunesQuery,
+  ): Promise<number> {
+    const params: unknown[] = [userId];
+    let gameClause = "";
+    if (typeof opts?.gameId === "number") {
+      gameClause = " AND t.game_id = ?";
+      params.push(opts.gameId);
+    }
+    const row = await this.db.queryOne<{ count: number }>(
+      `SELECT COUNT(*) AS count
+       FROM stars s
+       JOIN tunes t ON t.id = s.tune_id
+       WHERE s.user_id = ?${gameClause}`,
+      params,
+    );
+    return row?.count ?? 0;
+  }
 }

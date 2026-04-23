@@ -101,6 +101,22 @@ export class DemoStarManager implements IStarManager {
     return items.slice(offset, offset + limit).map((i) => i.tune);
   }
 
+  async countStarredByUser(
+    userId: number,
+    opts?: StarredTunesQuery,
+  ): Promise<number> {
+    const gameId = opts?.gameId;
+    const myStars = this.store.stars.filter((s) => s.userId === userId);
+    let count = 0;
+    for (const star of myStars) {
+      const tune = this.store.tunes.find((t) => t.id === star.tuneId);
+      if (!tune) continue;
+      if (typeof gameId === "number" && tune.gameId !== gameId) continue;
+      count += 1;
+    }
+    return count;
+  }
+
   private existing(userId: number, tuneId: number): boolean {
     return this.store.stars.some(
       (s) => s.userId === userId && s.tuneId === tuneId,

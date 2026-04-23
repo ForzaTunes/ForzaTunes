@@ -1,5 +1,6 @@
 ---
 import TuneListView from "../TuneListView.astro";
+import Pagination from "../Pagination.astro";
 import ProfileHeader from "./ProfileHeader.astro";
 import ProfileStats from "./ProfileStats.astro";
 import ProfileFilterBar from "./ProfileFilterBar";
@@ -24,8 +25,9 @@ interface Props {
   activeGameSlug: string | null;
   activeSort: TuneSortField;
   page: number;
-  limit: number;
+  totalPages: number;
   baseUrl: string;
+  searchParams: URLSearchParams;
   viewerLoggedIn: boolean;
 }
 
@@ -42,22 +44,17 @@ const {
   activeGameSlug,
   activeSort,
   page,
-  limit,
+  totalPages,
   baseUrl,
+  searchParams,
   viewerLoggedIn,
 } = Astro.props;
 
-function buildHref(overrides: {
-  tab?: ProfileTab;
-  page?: number;
-}): string {
+function buildTabHref(nextTab: ProfileTab): string {
   const params = new URLSearchParams();
-  const tab = overrides.tab ?? activeTab;
-  if (tab === "starred") params.set("tab", "starred");
+  if (nextTab === "starred") params.set("tab", "starred");
   if (activeGameSlug) params.set("game", activeGameSlug);
   if (activeSort !== "newest") params.set("sort", activeSort);
-  const targetPage = overrides.page ?? 1;
-  if (targetPage > 1) params.set("page", String(targetPage));
   const qs = params.toString();
   return qs ? `${baseUrl}?${qs}` : baseUrl;
 }
@@ -82,8 +79,6 @@ const emptyMessage = activeTab === "starred"
   : (isOwner
       ? `You haven't submitted any tunes${filterSuffix} yet.`
       : `${displayName} hasn't submitted any tunes${filterSuffix} yet.`);
-
-const hasNextPage = tunes.length === limit;
 ---
 
 <div class="max-w-6xl mx-auto px-4 py-8">
@@ -100,10 +95,10 @@ const hasNextPage = tunes.length === limit;
   />
 
   <nav class="flex gap-4 border-b border-gray-700 mb-6">
-    <a href={buildHref({ tab: "tunes" })} class={tabClasses(activeTab === "tunes")}>
+    <a href={buildTabHref("tunes")} class={tabClasses(activeTab === "tunes")}>
       Tunes
     </a>
-    <a href={buildHref({ tab: "starred" })} class={tabClasses(activeTab === "starred")}>
+    <a href={buildTabHref("starred")} class={tabClasses(activeTab === "starred")}>
       Starred
     </a>
   </nav>
@@ -124,14 +119,10 @@ const hasNextPage = tunes.length === limit;
     emptyMessage={emptyMessage}
   />
 
-  {hasNextPage && (
-    <div class="mt-8 flex justify-center">
-      <a
-        href={buildHref({ page: page + 1 })}
-        class="px-4 py-2 bg-gray-800 border border-gray-700 hover:border-accent-500 text-sm font-heading uppercase tracking-widest text-gray-300 transition-colors"
-      >
-        Load more
-      </a>
-    </div>
-  )}
+  <Pagination
+    currentPage={page}
+    totalPages={totalPages}
+    baseUrl={baseUrl}
+    searchParams={searchParams}
+  />
 </div>

@@ -228,10 +228,12 @@ export class TuneManager implements ITuneManager {
     return result?.total ?? 0;
   }
 
-  async countByUser(userId: number): Promise<number> {
+  async countByUser(userId: number, opts?: UserTunesQuery): Promise<number> {
+    const gameId = opts?.gameId;
     const result = await this.db.queryOne<{ total: number }>(
-      "SELECT COUNT(*) AS total FROM tunes WHERE user_id = ?1",
-      [userId],
+      `SELECT COUNT(*) AS total FROM tunes
+       WHERE user_id = ?1 AND (?2 IS NULL OR game_id = ?2)`,
+      [userId, gameId ?? null],
     );
     return result?.total ?? 0;
   }

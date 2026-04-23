@@ -20,6 +20,7 @@ interface Props {
   carImageKey?: string | null;
   piRating: number;
   creatorGamertag: string;
+  creatorPublicSlug: string;
   tuneTypeLabel: string;
   drivetrain?: string | null;
   carCategory?: string | null;
@@ -40,6 +41,7 @@ const {
   carImageKey,
   piRating,
   creatorGamertag,
+  creatorPublicSlug,
   tuneTypeLabel,
   drivetrain,
   carCategory,
@@ -90,7 +92,16 @@ const resolvedCarImage = CarImageUrlResolver.forCar(
           {formatCarSubtitle(carYear, carModel)}
         </p>
         <p class="mt-2 text-sm text-gray-400">
-          by <span class="text-gray-200">{creatorGamertag}</span>
+          by {creatorPublicSlug ? (
+            <a
+              href={`/u/${creatorPublicSlug}`}
+              class="text-gray-200 hover:text-accent-300 transition-colors underline-offset-2 hover:underline"
+            >
+              {creatorGamertag}
+            </a>
+          ) : (
+            <span class="text-gray-200">{creatorGamertag}</span>
+          )}
         </p>
       </div>
       <div class="shrink-0 flex flex-col items-end gap-2">
