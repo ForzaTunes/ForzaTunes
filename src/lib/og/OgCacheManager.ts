@@ -5,7 +5,7 @@
  */
 export class OgCacheManager {
   private static readonly CACHE_HOST = "https://cache.internal";
-  private static readonly TTL_SECONDS = 60 * 60 * 24 * 7;
+  private static readonly TTL_SECONDS = 60 * 60 * 4;
   private static readonly CACHE_CONTROL =
     `public, max-age=300, s-maxage=${OgCacheManager.TTL_SECONDS}, stale-while-revalidate=604800`;
 
