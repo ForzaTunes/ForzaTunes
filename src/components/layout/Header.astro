@@ -91,14 +91,14 @@ const displayName = user ? (user.forzaGamertag ?? user.username) : "";
           <div class="login-dropdown relative">
             <button
               type="button"
-              class="inline-flex items-center gap-2 bg-accent-600 px-4 py-2 text-sm font-medium text-white hover:bg-accent-500 transition-colors"
+              class="inline-flex items-center gap-2 h-8 bg-accent-600 px-3 text-xs font-heading font-bold uppercase tracking-widest text-white hover:bg-accent-500 transition-colors"
             >
               Login
-              <svg class="w-3.5 h-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <svg class="w-3 h-3 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="square" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            <div class="login-menu absolute right-0 mt-2 w-56 border border-gray-700 bg-gray-900 shadow-xl z-50 opacity-0 invisible transition-all duration-150">
+            <div class="login-menu absolute right-0 mt-1 w-56 border border-gray-700 bg-gray-900 shadow-xl z-50 opacity-0 invisible transition-all duration-150">
               <div class="px-3 py-2 border-b border-gray-800">
                 <span class="text-xs font-heading uppercase tracking-wider text-gray-500">Sign in with</span>
               </div>
@@ -130,9 +130,62 @@ const displayName = user ? (user.forzaGamertag ?? user.username) : "";
 </header>
 
 <style>
+  .login-dropdown.open .login-menu,
+  .user-dropdown.open .user-menu,
   .login-dropdown:focus-within .login-menu,
   .user-dropdown:focus-within .user-menu {
     opacity: 1;
     visibility: visible;
   }
 </style>
+
+<script>
+  const DROPDOWN_SELECTORS = [".login-dropdown", ".user-dropdown"];
+
+  function initDropdowns(): void {
+    const dropdowns = document.querySelectorAll<HTMLElement>(
+      DROPDOWN_SELECTORS.join(","),
+    );
+
+    dropdowns.forEach((dropdown) => {
+      const trigger = dropdown.querySelector<HTMLButtonElement>("button");
+      if (!trigger || trigger.dataset.dropdownBound === "1") return;
+      trigger.dataset.dropdownBound = "1";
+
+      trigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const wasOpen = dropdown.classList.contains("open");
+        document
+          .querySelectorAll<HTMLElement>(".login-dropdown.open, .user-dropdown.open")
+          .forEach((d) => d.classList.remove("open"));
+        if (!wasOpen) dropdown.classList.add("open");
+      });
+    });
+  }
+
+  function bindGlobalDismissers(): void {
+    if (document.documentElement.dataset.dropdownDismissers === "1") return;
+    document.documentElement.dataset.dropdownDismissers = "1";
+
+    document.addEventListener("click", (event) => {
+      const target = event.target as Node | null;
+      document
+        .querySelectorAll<HTMLElement>(".login-dropdown.open, .user-dropdown.open")
+        .forEach((dropdown) => {
+          if (!target || !dropdown.contains(target)) {
+            dropdown.classList.remove("open");
+          }
+        });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      document
+        .querySelectorAll<HTMLElement>(".login-dropdown.open, .user-dropdown.open")
+        .forEach((d) => d.classList.remove("open"));
+    });
+  }
+
+  initDropdowns();
+  bindGlobalDismissers();
+</script>
