@@ -16,9 +16,12 @@ function isValidSlug(raw: string | undefined): raw is string {
   return /^[A-Za-z0-9]{8,32}$/.test(raw);
 }
 
-export const GET: APIRoute = async ({ params, locals }) => {
+export const GET: APIRoute = async ({ request, params, locals }) => {
   const slug = params.slug;
   if (!isValidSlug(slug)) return OgCacheManager.notFound("invalid slug");
+
+  const cached = await OgCacheManager.tryServe(request);
+  if (cached) return cached;
 
   const { users, tunes, stars, games } = locals.managers;
   const userRow = await users.findByPublicSlug(slug);
@@ -45,5 +48,5 @@ export const GET: APIRoute = async ({ params, locals }) => {
     }),
   );
 
-  return OgCacheManager.applyTo(response);
+  return OgCacheManager.store(request, response);
 };

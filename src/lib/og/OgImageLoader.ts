@@ -12,11 +12,11 @@ export class OgImageLoader {
   private static readonly CACHE_HOST = "https://cache.internal";
   private static readonly CACHE_TTL_SECONDS = 60 * 60 * 24 * 30;
   private static readonly TRANSFORM_OPTS = {
-    width: 1080,
-    height: 1080,
+    width: 780,
+    height: 780,
     fit: "cover",
     format: "png",
-    quality: 90,
+    quality: 80,
   } as const;
 
   private static readonly memoryCache = new Map<string, string>();

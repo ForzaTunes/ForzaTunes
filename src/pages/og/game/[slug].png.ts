@@ -9,9 +9,12 @@ const TAGLINES: Record<string, string> = {
   fh6: "Tunes by the Forza Horizon 6 community.",
 };
 
-export const GET: APIRoute = async ({ params, locals }) => {
+export const GET: APIRoute = async ({ request, params, locals }) => {
   const gameSlug = params.slug;
   if (!gameSlug) return OgCacheManager.notFound("missing slug");
+
+  const cached = await OgCacheManager.tryServe(request);
+  if (cached) return cached;
 
   const { games, tunes, cars } = locals.managers;
   const game = await games.getBySlug(gameSlug);
@@ -33,5 +36,5 @@ export const GET: APIRoute = async ({ params, locals }) => {
     }),
   );
 
-  return OgCacheManager.applyTo(response);
+  return OgCacheManager.store(request, response);
 };

@@ -11,12 +11,15 @@ function parseId(raw: string | undefined): number | null {
   return id;
 }
 
-export const GET: APIRoute = async ({ params, locals }) => {
+export const GET: APIRoute = async ({ request, params, locals }) => {
   const tuneId = parseId(params.id);
   const gameSlug = params.game;
   if (tuneId === null || !gameSlug) {
     return OgCacheManager.notFound("invalid params");
   }
+
+  const cached = await OgCacheManager.tryServe(request);
+  if (cached) return cached;
 
   const { tunes, games } = locals.managers;
   const [tune, game] = await Promise.all([
@@ -51,5 +54,5 @@ export const GET: APIRoute = async ({ params, locals }) => {
     }),
   );
 
-  return OgCacheManager.applyTo(response);
+  return OgCacheManager.store(request, response);
 };
