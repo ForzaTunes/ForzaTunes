@@ -17,8 +17,14 @@ export default defineConfig({
         "https://forzatunes.com/fh5/tunes",
         "https://forzatunes.com/fm",
         "https://forzatunes.com/fm/tunes",
+        "https://forzatunes.com/fh6",
+        "https://forzatunes.com/fh6/tunes",
       ],
-      filter: (page) => !page.includes("/auth/") && !page.includes("/profile"),
+      filter: (page) =>
+        !page.includes("/auth/") &&
+        !page.includes("/profile") &&
+        !page.includes("/banned") &&
+        !page.includes("/og/"),
     }),
   ],
   vite: {
