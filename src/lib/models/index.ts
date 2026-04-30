@@ -19,3 +19,8 @@ export type { User, UserProfile } from "./User";
 export type { Star } from "./Star";
 export type { Report, ReportReason, ReportStatus } from "./Report";
 export { REPORT_REASONS } from "./Report";
+export type {
+  SoundtrackTrack,
+  RadioStation,
+  SoundtrackData,
+} from "./Soundtrack";

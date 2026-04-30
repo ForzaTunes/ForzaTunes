@@ -1,0 +1,31 @@
+---
+import PageShell from "../../components/layout/PageShell.astro";
+import MusicExplorer from "../../components/music/MusicExplorer.tsx";
+import type { SoundtrackData } from "../../lib/models";
+
+import fh5Data from "../../data/soundtracks/fh5.json";
+import fh4Data from "../../data/soundtracks/fh4.json";
+import fh6Data from "../../data/soundtracks/fh6.json";
+
+const soundtracks: Record<string, SoundtrackData> = {
+  fh6: fh6Data as SoundtrackData,
+  fh5: fh5Data as SoundtrackData,
+  fh4: fh4Data as SoundtrackData,
+};
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=3600, stale-while-revalidate=86400",
+);
+---
+
+<PageShell
+  title="Game Soundtracks — ForzaTunesTunes"
+  description="Browse every radio station and track from Forza Horizon 5 and Forza Horizon 4. Listen on Spotify."
+  canonicalUrl="/music"
+  hideFooter
+>
+  <div class="fixed inset-x-0 top-[3.5rem] bottom-0 z-10">
+    <MusicExplorer client:load soundtracks={soundtracks} />
+  </div>
+</PageShell>

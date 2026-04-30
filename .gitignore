@@ -39,3 +39,6 @@ Thumbs.db
 
 # Agent / assistant scratch
 .cursor/
+
+# Local playlist import utility
+playlist-imports/

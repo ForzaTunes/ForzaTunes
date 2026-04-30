@@ -11,6 +11,7 @@ interface Props {
   ogImage?: string;
   ogType?: "website" | "article";
   structuredData?: Record<string, unknown>;
+  hideFooter?: boolean;
 }
 
 const {
@@ -21,6 +22,7 @@ const {
   ogImage = "/og-default.png",
   ogType = "website",
   structuredData,
+  hideFooter = false,
 } = Astro.props;
 
 const siteUrl = "https://forzatunes.com";
@@ -87,9 +89,9 @@ const fullOgImage = ogImage.startsWith("http")
   </head>
   <body class="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
     <Header currentGameSlug={currentGameSlug} user={Astro.locals.user} />
-    <main class="flex-1">
+    <main class="flex-1 min-h-0">
       <slot />
     </main>
-    <Footer gameSlug={currentGameSlug} />
+    {!hideFooter && <Footer gameSlug={currentGameSlug} />}
   </body>
 </html>

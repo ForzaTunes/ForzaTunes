@@ -82,6 +82,15 @@ html::-webkit-scrollbar-thumb:hover {
   --fz-class-X-fg: #ffffff;
 }
 
+.theme-fh4 {
+  --color-accent-300: #7dd3fc;
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
+  --color-accent-600: #0284c7;
+  --color-accent-700: #0369a1;
+  --color-accent-900: #0c4a6e;
+}
+
 .theme-fh6 {
   --color-accent-300: #f9a8d4;
   --color-accent-400: #f472b6;
