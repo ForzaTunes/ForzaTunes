@@ -15,6 +15,9 @@ const GENRE_GRADIENTS: Record<string, string> = {
   "Punk Rock": "from-orange-950/30",
   "Synthwave": "from-violet-950/30",
   "Throwback": "from-emerald-950/30",
+  "Indie / Alternative": "from-teal-950/30",
+  "J-Pop / City Pop": "from-fuchsia-950/30",
+  "Neo-Classical": "from-indigo-950/30",
 };
 
 function getSpotifyEmbedUrl(spotifyUrl: string): string {
