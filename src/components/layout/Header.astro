@@ -14,8 +14,10 @@ interface Props {
 
 const { currentGameSlug, user } = Astro.props;
 
-const NAV_ORDER = ["fh6", "fh5", "fm"];
+const NAV_ORDER = ["fh6", "fh5"];
+const HIDDEN_SLUGS = new Set(["fm"]);
 const games = (gamesJson as Array<{ slug: string; name: string; shortName: string }>)
+  .filter((g) => !HIDDEN_SLUGS.has(g.slug))
   .map((g) => ({ slug: g.slug, name: g.name, shortName: g.shortName }))
   .sort((a, b) => {
     const ai = NAV_ORDER.indexOf(a.slug);

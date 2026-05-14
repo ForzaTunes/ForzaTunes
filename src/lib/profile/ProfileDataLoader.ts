@@ -91,7 +91,7 @@ export class ProfileDataLoader {
     const gameSlugMap = new Map(games.map((g) => [g.id, g.slug]));
     const tunes: ProfileTuneItem[] = tunesRaw.map((t) => ({
       ...t,
-      gameSlug: gameSlugMap.get(t.gameId) ?? "fh5",
+      gameSlug: gameSlugMap.get(t.gameId) ?? "fh6",
     }));
 
     const starredTuneIds = viewerId

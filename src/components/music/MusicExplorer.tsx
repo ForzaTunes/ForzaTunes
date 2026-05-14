@@ -21,7 +21,7 @@ interface MusicExplorerProps {
 }
 
 export default function MusicExplorer({ soundtracks }: MusicExplorerProps) {
-  const [selectedGame, setSelectedGame] = useState("fh5");
+  const [selectedGame, setSelectedGame] = useState("fh6");
   const gameData = soundtracks[selectedGame];
   const firstStationSlug = gameData?.stations[0]?.slug ?? "";
 
